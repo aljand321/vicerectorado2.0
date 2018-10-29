@@ -1,4 +1,3 @@
-
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -11,7 +10,7 @@ mongoose.connect('mongodb://localhost/vicerectorado')
   .catch(err => console.log(err));
 
 // importar rutas
-const indexRoutes = require('./routes/index.js');
+const indexRoutes = require('./routes/index');
 
 //configurar
 app.set('port', process.env.PORT || 3000);
@@ -20,10 +19,10 @@ app.set('view engine', 'ejs');
 
 //middleware
 app.use(morgan('dev'));
-
+app.use(express.urlencoded({extend: true}));
 //rutas
 app.use('/', indexRoutes);
-app.use(express.urlencoded({extend: true}));
+
 
 // iniciar servicio
 app.listen(app.get('port'), () =>{

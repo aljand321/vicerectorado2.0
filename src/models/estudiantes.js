@@ -1,7 +1,7 @@
-const mongoose = require('nongoose');
-const Schema = mongoose.Schemma;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const estudetnkSchema = Schema({
+const estudetnSchema = Schema({
   numResolucion: String,
   numDictamen: String,
   carrera: String,
@@ -12,4 +12,4 @@ const estudetnkSchema = Schema({
   obs: String
 });
 
-module.exports = mongoose.model('estudiantes', estudetnkSchema);
+module.exports = mongoose.model('estudiantes', estudetnSchema);
