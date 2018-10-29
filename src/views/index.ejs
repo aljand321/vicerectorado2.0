@@ -1,12 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Estudiantes</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
-     <h1>hola</h1>
+       <nav class="nav navbar-dark bg-dark mb-4">
+         <a href="/" class="navbar-brand">UATF</a>
+       </nav>
+
+       <!-- este es el formulario -->
+       <div class="container">
+         <div class="row">
+           <div class="col-md-5">
+             <div class="card">
+               <div class="card-body">
+
+
+                 <form class="" action="/addResEstu" method="POST">
+                   <div class="form-group">
+                     <input type="text" name="numResolucion" placeholder="N° Resolucion" class="form-control">
+
+                   </div>
+
+                   <div class="form-group">
+                     <input type="text" name="numDictamen" placeholder="N° Dictamen" class="form-control">
+
+                   </div>
+
+                   <div class="form-group">
+                     <!-- <label for="label-name1" class="label-name1">Gestion</label> -->
+                     <select class="form-control" id="gender1" name="gestion">
+								    	  <option value="1">Sistemas</option>
+									      <option value="2">Civil</option>
+									      <option value="3">Informatica</option>
+							  	   </select>
+
+                   </div>
+
+                   <div class="form-group">
+                     <input type="text" name="anio" placeholder="Año" class="form-control">
+
+                   </div>
+
+                   <div class="form-group">
+                     <!-- <label for="label-name1" class="label-name1">Gestion</label> -->
+                     <select class="form-control" id="gender1" name="gestion">
+								    	  <option value="1">Gestion</option>
+									      <option value="2">1</option>
+									      <option value="3">2</option>
+							  	   </select>
+
+                   </div>
+
+                   <div class="form-group">
+                     <!-- <label>Tipo de Beca</label> -->
+                     <select class="form-control" id="gender2" name="tipo">
+								    	  <option value="1">Auxiliar</option>
+									      <option value="2">Graduacion</option>
+									      <option value="3">Trabajo</option>
+							  	   </select>
+
+                   </div>
+
+                   <div class="form-group">
+                     <input type="text" name="pdf" placeholder="inserte un numero" class="form-control">
+
+                   </div>
+
+                   <div class="form-group">
+                     <textarea name="obs" rows="4" cols="80" class="form-control" placeholder="Observaciones"></textarea>
+
+                   </div>
+
+                   <button type="submit" class="btn btn-primary btn-block">Insertar <Datos></Datos></button>
+
+                 </form>
+
+               </div>
+
+             </div>
+
+           </div>
+
+           <div class="col-md-12">
+             <table class="table table-bordered table-hover">
+               <thead>
+                 <tr>
+                   <th>N° Resolucion</th>
+                   <th>N° Dictamen</th>
+                   <th>Carrera</th>
+                   <th>Año</th>
+                   <th>Gestion</th>
+                   <th>Beca</th>
+                   <th>DOC</th>
+                   <th>Observaciones</th>
+
+                 </tr>
+               </thead>
+
+             </table>
+
+           </div>
+
+         </div>
+
+       </div>
+
+       <!-- tabla -->
+
+
+
 </body>
 </html>

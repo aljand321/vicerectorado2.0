@@ -4,10 +4,12 @@ const Schema = mongoose.Schemma;
 const estudetnkSchema = Schema({
   numResolucion: String,
   numDictamen: String,
+  carrera: String,
+  anio: Number,
   gestion: String,
-  año: Number,
   tipo: String,
-  pdf: String
+  pdf: String,
+  obs: String
 });
 
 module.exports = mongoose.model('estudiantes', estudetnkSchema);
