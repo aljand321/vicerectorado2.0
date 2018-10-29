@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Student = require('../models/student');
 const bodyParser = require('body-parser');
+
 router.get('/', async(req, res) => {
 const student = await Student.find();
 res.render('index',{
@@ -10,11 +11,12 @@ res.render('index',{
 });
 
 router.post('/add', async (req, res) =>{
+
 const student = new Student(req.body);
 await student.save();
 console.log(student);
-//res.redirect('/');
-res.send('received');
+res.redirect('/');
+//res.send('received');
 });
 
 router.get('/turn/id:', async(req, res)=> {
