@@ -4,11 +4,7 @@ const Schema = mongoose.Schema;
 const estudetnSchema = Schema({
   numResolucion: String,
   numDictamen: String,
-  carrera: String,
-  anio: Number,
-  gestion: String,
-  tipo: String,
-  pdf: String,
+  pdf: Array,
   obs: String
 });
 
