@@ -1,11 +1,12 @@
-const mongoose = require("../connect");
+const mongoose = require('mongoose');
 const Schema = require("mongoose").Schema;
 var cardocSchema = {
-  nombre : String,
-  id_carrera : String,
-  gestion : String,
-  date: String,
-  resol: {type: Schema.ObjectId, ref: "resolucion"}
+  nod : String,
+  nor : String,
+  pdf :Array,
+  obs: String,
+  id_a: {type: Schema.ObjectId, ref: "agrupard"}
+
 };
 var docente = mongoose.model("docente", cardocSchema);
 module.exports = docente;
