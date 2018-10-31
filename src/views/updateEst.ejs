@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Update Estudiantes</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="nav navbar-dark bg-dark mb-4">
+    <a href="/" class="navbar-brand">UATF</a>
+  </nav>
+
+      <div class="container">
+        <div class="row">
+<!-- <pre>
+    <%= mostrar%>
+</pre> -->
+
+
+          <div class="col-md-5 offset-md-3" >
+            <div class="card">
+              <div class="card-body">
+
+
+                <form class="" action="/editEst/<%= mostrar._id %>" method="POST">
+                  <div class="form-group">
+                    <input type="text" name="numResolucion" class="form-control" value="<%= mostrar.numResolucion %>" >
+
+                  </div>
+
+                  <div class="form-group">
+                    <input type="text" name="numDictamen" class="form-control" value="<%= mostrar.numDictamen %>">
+
+                  </div>
+
+                  <div class="form-group">
+                    <input type="text" name="pdf" class="form-control" value="<%= mostrar.pdf %>">
+
+                  </div>
+
+                  <div class="form-group">
+                    <textarea name="obs" rows="4" cols="80" class="form-control" ><%= mostrar.obs %></textarea>
+
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block">Actualizar <Datos></Datos></button>
+
+                </form>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+</body>
+</html>

@@ -12,15 +12,10 @@
        <nav class="nav navbar-dark bg-dark mb-4">
          <a href="/" class="navbar-brand">UATF</a>
        </nav>
-
-       <pre>
-         <%= estudiantes %>
-       </pre>
-
        <!-- este es el formulario -->
        <div class="container">
          <div class="row">
-           <div class="col-md-5">
+           <div class="col-md-3">
              <div class="card">
                <div class="card-body">
 
@@ -33,41 +28,6 @@
 
                    <div class="form-group">
                      <input type="text" name="numDictamen" placeholder="N° Dictamen" class="form-control">
-
-                   </div>
-
-                   <div class="form-group">
-                     <!-- <label for="label-name1" class="label-name1">Gestion</label> -->
-                     <select class="form-control" id="gender1" name="carrera">
-								    	  <option value="1">Sistemas</option>
-									      <option value="2">Civil</option>
-									      <option value="3">Informatica</option>
-							  	   </select>
-
-                   </div>
-
-                   <div class="form-group">
-                     <input type="text" name="anio" placeholder="Año" class="form-control">
-
-                   </div>
-
-                   <div class="form-group">
-                     <!-- <label for="label-name1" class="label-name1">Gestion</label> -->
-                     <select class="form-control" id="gender1" name="gestion">
-								    	  <option value="1">Gestion</option>
-									      <option value="2">1</option>
-									      <option value="3">2</option>
-							  	   </select>
-
-                   </div>
-
-                   <div class="form-group">
-                     <!-- <label>Tipo de Beca</label> -->
-                     <select class="form-control" id="gender2" name="tipo">
-								    	  <option value="1">Auxiliar</option>
-									      <option value="2">Graduacion</option>
-									      <option value="3">Trabajo</option>
-							  	   </select>
 
                    </div>
 
@@ -91,25 +51,34 @@
 
            </div>
 
-           <div class="col-md-12">
+           <div class="col-md-9">
              <table class="table table-bordered table-hover">
                <thead>
                  <tr>
-                   <th>N° Resolucion</th>
-                   <th>N° Dictamen</th>
-                   <th>Carrera</th>
-                   <th>Año</th>
-                   <th>Gestion</th>
-                   <th>Beca</th>
+                   <th>Resolucion</th>
+                   <th>Dictamen</th>
                    <th>DOC</th>
                    <th>Observaciones</th>
-                   <th>operaciones</th>
+                   <th>Operacion</th>
 
                  </tr>
                </thead>
 
                <tbody>
                  <% for(var i=0; i < estudiantes.length; i++) { %>
+                   <tr>
+                     <td> <%=estudiantes[i].numResolucion %> </td>
+                     <td> <%=estudiantes[i].numDictamen %> </td>
+                     <td> <%=estudiantes[i].pdf %> </td>
+                     <td> <%=estudiantes[i].obs %> </td>
+                     <td>
+                       <a href="/delete/<%=estudiantes[i]._id %>" class="btn btn-danger">Del</a>
+                       <a href="/form_paraEditar/<%=estudiantes[i]._id %>" class="btn btn-info">Edit</a>
+                       <a href="#"class="btn btn-info">Cartas</a>
+
+                     </td>
+                   </tr>
+
                    <% } %>
                </tbody>
 
