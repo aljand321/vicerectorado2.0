@@ -6,7 +6,7 @@ const loginSchema = new Schema ({
   nombres: String,
   apellidos:String,
   email: String,
-  password: String
+  password: String,
   telefono: Number,
   ci: String
 
