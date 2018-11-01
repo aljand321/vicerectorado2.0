@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const estudetnSchema = Schema({
   numResolucion: String,
   numDictamen: String,
-  tipo: String,
   pdf: Array,
   obs: String,
   id_a: {type: Schema.ObjectId, ref: "agrupare"}

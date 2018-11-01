@@ -1,17 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
+//aljand
+const Estudiantes = require('../models/estudiantes');
+const Login = require('../models/login');
+//>>>>>>>>>>>>>>>>>>>
+
 const Student = require('../models/student');
 const Career = require('../models/career');
 const Facultad = require('../models/faculty');
 const bodyParser = require('body-parser');
 const Agrupare = require('../models/agrupare');
 
-router.get('/', async(req, res) => {
-const student = await Student.find();
-res.render('index',{
-  student // student:student
-});
+router.get('/', async (req, res) => {
+  const user = await Login.find();
+  res.render('index',{
+    user
+  });
 });
 
 router.post('/add', async (req, res) =>{
@@ -63,20 +68,8 @@ console.log(career);
 res.send('received');
 });
 
-//router.post('/add')
 
-
-
-const Estudiantes = require('../models/estudiantes');
-const Login = require('../models/login');
-
-router.get('/', async (req, res) => {
-  const estudiantes = await Estudiantes.find();
-  res.render('index',{
-    estudiantes
-  });
-});
-
+// >>>>aljand
 //servicio para añadir a models estudiantes.js
 router.post('/addResEstu', async (req, res) => {
   const estudent = new Estudiantes(req.body);

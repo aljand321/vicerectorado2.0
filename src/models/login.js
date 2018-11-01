@@ -5,7 +5,7 @@ const loginSchema = new Schema ({
 
   nombres: String,
   apellidos:String,
-  email: String,
+  email: {type: String, require: "el correo es obligatorio"},
   password: String,
   telefono: Number,
   ci: String
