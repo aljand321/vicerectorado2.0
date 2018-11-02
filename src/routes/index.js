@@ -1,11 +1,29 @@
 const express = require('express');
 const router = express.Router();
 
-const Student = require('../models/student');
+var multer = require('multer');
+var fs = require('fs');
+const Student = require('../models/CartaEstudiante');
+const Teacher = require('../models/CartaDocente');
 const Career = require('../models/career');
 const Facultad = require('../models/faculty');
 const bodyParser = require('body-parser');
-const Agrupare = require('../models/agrupare');
+const Agrupare = require('../models/agruparestudiante');
+const Agrupard = require('../models/agrupardocente');
+const Docente = require('../models/ResolucionDocente');
+const Pdf = require('../models/pdf');
+
+var storage = multer.diskStorage({
+  destination: function(req, file, cb){
+    cb(null ,'./documentos')//aqui se define el lugar donde se almacena la imagen
+  },
+  filename: function (req, file, cb) {
+    console.log("-------------------------");
+    console.log(file);
+    cb(null, file.originalname + "-" +  Date.now() );
+  }
+});
+var upload = multer({storage : storage}).single('doc');
 
 router.get('/', async(req, res) => {
 const student = await Student.find();
@@ -63,11 +81,10 @@ console.log(career);
 res.send('received');
 });
 
-//router.post('/add')
 
 
 
-const Estudiantes = require('../models/estudiantes');
+const Estudiantes = require('../models/ResolucionEstudiante');
 
 router.get('/', async (req, res) => {
   const estudiantes = await Estudiantes.find();
@@ -79,9 +96,149 @@ router.get('/', async (req, res) => {
 router.post('/addResEstu', async (req, res) => {
   const estudent = new Estudiantes(req.body);
   await estudent.save();
+  const { id } = estudent._id;
   res.redirect('/');
 });
 
+router.post('/addResDoc', async (req, res) =>{
+  const dc = {
+    nod : req.body.nod,
+    nor : req.body.nor,
+    obs : req.body.obs
+  };
+  const docente = new Docente(dc);
+  await docente.save();
+  const ida = docente._id;
+  upload(req, res ,(err) => {
+    if(err){
+      res.status(500).json({
+        "msn" : "No se ha podido subir el documento"
+      });
+    }
+    else{
+      var ruta = req.file.path.substr(6, req.file.path.length);
+      console.log(ruta);
+      const pdf = {
+        id_ref : ida,
+        name : req.file.originalname,
+        physicalpath : req.file.path,
+        relativepath : "http://localhost:3000" + ruta
+      };
+      const pdfData = new Pdf(pdf);
+      pdfData.save().then( (infopdf) => {
+        const file = {
+          arch : new Array()
+        };
+        const data = docente.pdf;
+        const aux = new Array();
+        if(data.length == 1 && data[0] == ""){
+          file.arch.push("/addResDoc/"+infopdf._id);
+        }
+        else{
+          aux.push("/addResDoc/"+ infopdf._id);
+          data = data.concat(aux);
+          file.arch = data;
+        }
+        Docente.findOneAndUpdate({_id : ida}, file, (err, params) => {
+          if(err){
+            res.status(500).json({
+              "msn" : "erro"
+            });
+            return;
+          }
+          res.status(200).json({
+            "msn" : "bien"
+          })
+          return;
+        });
+
+      });
+    }
+  });
+});
+
+router.post('/addADoc', async (req, res)=>{
+  const agr = {
+    carrera : req.body.carrera,
+    gestion : req.body.gestion,
+    date : req.body.date
+  };
+  const dc = {
+    nod : req.body.nod,
+    nor : req.body.nor,
+    pdf : "",
+    obs : req.body.obs
+  };
+  const agrupard = new Agrupard(agr);
+  const race = agrupard.carrera;
+  Career.findOne({nombre : race }).exec( async (error, docs)=>{
+    if(error){
+      res.status(200).json({
+        "msn" : error
+      })
+      return
+    }
+    if(docs!= null){
+      await agrupard.save();
+      const ida  = agrupard._id;
+      const docente = new Docente(dc);
+      docente.id_a = ida;
+      Agrupard.findOne({_id : ida}).exec( async (err, docs)=>{
+        if(err){
+          res.status(200).json({
+            "msn" : err
+          })
+          return
+        }
+        if(docs!=null){
+          await docente.save();
+          var idd = docente._id;
+          upload(req, res, (error) => {
+            if(error){
+              res.status(500).json({
+                "msn" : "No se ha podido subir la imagen"
+
+              });
+            }else{
+              var ruta = req.file.path.substr(6, req.file.path.length);
+              console.log(ruta);
+              var pdf = {
+                id_ref : idd,
+                name : req.file.originalname,
+                idhome: req.file.path,
+                physicalpath : req.file.path,
+                relativepath : "http://localhost:3000" + ruta
+              };
+              var pdfDato = new Pdf(pdf);
+
+              pdfDato.save().then( () => {
+                res.status(200).json( req.file);
+              });
+            }
+          });
+        }
+        else{
+          res.send('no existe');
+        }
+        return
+      })
+      res.send('listo');
+    }
+    else{
+      res.status(200).json({
+        "msn": "no se encuentra"
+      })
+      return
+    }
+    return
+  })
+
+
+
+//  const docente = new Docente(req.body);
+  //const { id } = docente._id;
+  //await docente.save();
+});
 // metodo actualizar
 //>>>>>>>>>>>>>><
 // este servicio sirve para cambiar de pestaña recuperando el ID
