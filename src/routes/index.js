@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
-
 var multer = require('multer');
 var fs = require('fs');
-const Student = require('../models/CartaEstudiante');
-const Teacher = require('../models/CartaDocente');
+//const Student = require('../models/CartaEstudiante');
+//const Teacher = require('../models/CartaDocente');
+
+//aljand
+const Estudiantes = require('../models/estudiantes');
+const Login = require('../models/login');
+//>>>>>>>>>>>>>>>>>>>
+
+//const Student = require('../models/student');
 const Career = require('../models/career');
 const Facultad = require('../models/faculty');
 const bodyParser = require('body-parser');
@@ -25,11 +31,11 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage : storage}).single('doc');
 
-router.get('/', async(req, res) => {
-const student = await Student.find();
-res.render('index',{
-  student // student:student
-});
+router.get('/', async (req, res) => {
+  const user = await Login.find();
+  res.render('index',{
+    user
+  });
 });
 
 router.post('/add', async (req, res) =>{
@@ -93,6 +99,8 @@ router.get('/', async (req, res) => {
   });
 });
 
+// >>>>aljand
+//servicio para añadir a models estudiantes.js
 router.post('/addResEstu', async (req, res) => {
   const estudent = new Estudiantes(req.body);
   await estudent.save();
@@ -259,27 +267,25 @@ router.post('/editEst/:id', async (req, res) => {
 
 //>>>>>>>>>>>>>>>>
 
-router.get('/turn/id:', async(req, res)=> {
-  const { id }= req.params;
-  const student = await Student.findById(id);
-  student.gestion = "hoal";
-  await student.save();
-  res.redirect('/');
+//>>>>>>>>>
+// // servicio para login
+// <<<<<<<<<<<<<<<<<<<<
+router.post("/users", function(req, res) {
+  var user = new Login({email: req.body.email, password: req.body.password, password_confirmation: req.body.password_confirmation});
+  user.save(function(err){
+    res.send("se guardo los datos que mandaste");
+  });
 });
+// >>>>>>>>>>>>>>>>>>>>
+//servicio para mostrar datos del login
+router.get("/user", function(req, res){
+  Login.find(function(err, doc){
+    console.log(doc);
+    res.render("user");
+  });
+});
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-router.get('/edit/:id', async(req , res) =>{
-  const { id }= req.params;
-  const student = await Student.findById(id);
-  res.render('edit', {
-    student
-  });//aqui se pone el nombre de la pagina dodne v editar si cambia
-});
-
-router.post('/edit/:id', async (req, res) => {
-  const { id } = req.params;
-  await Student.update({_id:id }, req.body);
-  res.redirect('/');
-});
 
 router.get('/delete/:id', async (req, res, next) => {
   let { id }  = req.params;
