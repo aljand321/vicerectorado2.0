@@ -99,16 +99,50 @@ router.post('/editEst/:id', async (req, res) => {
 
 //>>>>>>>>>>>>>>>>
 
+router.get('/regUSER', async (req, res) => {
+  res.render('registrarUsuarios')
+});
+
 //>>>>>>>>>
-// // servicio para login
+// // servicio para registrar un nuevo usuario
 // <<<<<<<<<<<<<<<<<<<<
 router.post("/users", function(req, res) {
-  var user = new Login({email: req.body.email, password: req.body.password, password_confirmation: req.body.password_confirmation});
-  user.save(function(err){
-    res.send("se guardo los datos que mandaste");
-  });
+  var user = new Login({
+                        nombres: req.body.nombres,
+                        apellidos: req.body.apellidos,
+                        email: req.body.email,
+                        password: req.body.password,
+                        password_confirmation: req.body.password_confirmation
+                      });
+
+     user.save().then(function(us){
+       res.render('index')
+     },function(err){
+       if(err){
+         console.log(String(err));
+         res.render('registrarUsuarios');
+       }
+    });
+  // user.save(function(err,user,numero){
+  //   if (err){
+  //     console.log(String(err));
+  //   }
+  //   res.render('index')
+  // });
 });
 // >>>>>>>>>>>>>>>>>>>>
+
+//servicio para iniciar sesion
+router.post("/sessions",function(req,res){
+
+  Login.find({email:req.body.email, password:req.body.password},function(err,docs){
+    console.log(docs);
+    res.send("hola esta es una ventana diferente");
+  });
+
+});
+//>>>>>>>>>>
+
 //servicio para mostrar datos del login
 router.get("/user", function(req, res){
   Login.find(function(err, doc){
