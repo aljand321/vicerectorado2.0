@@ -88,17 +88,6 @@ res.send('received');
 });
 
 
-
-
-const Estudiantes = require('../models/ResolucionEstudiante');
-
-router.get('/', async (req, res) => {
-  const estudiantes = await Estudiantes.find();
-  res.render('index',{
-    estudiantes
-  });
-});
-
 // >>>>aljand
 //servicio para añadir a models estudiantes.js
 router.post('/addResEstu', async (req, res) => {
