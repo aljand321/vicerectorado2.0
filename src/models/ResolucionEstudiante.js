@@ -6,7 +6,8 @@ const estudetnSchema = Schema({
   numDictamen: String,
   pdf: Array,
   obs: String,
-  id_a: {type: Schema.ObjectId, ref: "agrupare"}
+  id_a: {type: Schema.ObjectId, ref: "agrupare"},
+  fecha: String
 });
 
 module.exports = mongoose.model('estudiantes', estudetnSchema);

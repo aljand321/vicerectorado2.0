@@ -5,6 +5,6 @@ const StudentSchema = new Schema({
   apellido : String,
   pdf : Array,
   obs :String,
-  id_e: {type: Schema.ObjectId, ref: "estudiantes"}
+  id_ResEst: {type: Schema.ObjectId, ref: "estudiantes"}
 });
  module.exports =  mongoose.model('student', StudentSchema);
