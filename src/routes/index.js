@@ -46,6 +46,8 @@ res.redirect('/');
 //res.send('received');
 });
 
+//servicio para añadir a facultad
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<
 router.post('/addf', async (req, res) =>{
 const facultad = new Facultad(req.body);
 await facultad.save();
@@ -54,6 +56,10 @@ console.log(facultad);
 res.send('received');
 });
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
+
+//servicio para añadir a carrera con id
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post(/race\/[a-z0-9]{1,}$/, async (req, res) =>{
   var url = req.url;
   var id = url.split("/")[2];
@@ -86,16 +92,9 @@ console.log(career);
 //res.redirect('/');
 res.send('received');
 });
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-// >>>>aljand
-//servicio para añadir a models estudiantes.js
-router.post('/addResEstu', async (req, res) => {
-  const estudent = new Estudiantes(req.body);
-  await estudent.save();
-  const { id } = estudent._id;
-  res.redirect('/');
-});
 
 router.post('/addResDoc', async (req, res) =>{
   const dc = {
@@ -154,11 +153,13 @@ router.post('/addResDoc', async (req, res) =>{
   });
 });
 
+//servicio para añadir a agrupar docente
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post('/addADoc', async (req, res)=>{
   const agr = {
     carrera : req.body.carrera,
     gestion : req.body.gestion,
-    date : req.body.date
+    periodo : req.body.periodo
   };
   const dc = {
     nod : req.body.nod,
@@ -219,7 +220,8 @@ router.post('/addADoc', async (req, res)=>{
         }
         return
       })
-      res.send('listo');
+      res.render('grupoDocentes');
+      // res .render('')
     }
     else{
       res.status(200).json({
@@ -229,15 +231,38 @@ router.post('/addADoc', async (req, res)=>{
     }
     return
   })
-
-
-
 //  const docente = new Docente(req.body);
   //const { id } = docente._id;
   //await docente.save();
 });
 // metodo actualizar
 //>>>>>>>>>>>>>><
+
+// >>>>aljand
+
+// //Rutas sencillas para mostrar ventanas
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+router.get('/regUSER', async (req, res) => {
+  res.render('registrarUsuarios');
+});
+
+//esto muestra la venta grupo docnetes
+router.get('/gDoc', async (req, res) => {
+  const GetDocente = await Agrupard.find();
+  res.render('grupoDocentes',{
+    GetDocente
+  });
+});
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//servicio para añadir a models estudiantes.js
+router.post('/addResEstu', async (req, res) => {
+  const estudent = new Estudiantes(req.body);
+  await estudent.save();
+  const { id } = estudent._id;
+  res.redirect('/');
+});
+
 // este servicio sirve para cambiar de pestaña recuperando el ID
 router.get('/form_paraEditar/:id', async (req, res) => {
   const { id } = req.params;
@@ -255,10 +280,6 @@ router.post('/editEst/:id', async (req, res) => {
 });
 
 //>>>>>>>>>>>>>>>>
-
-router.get('/regUSER', async (req, res) => {
-  res.render('registrarUsuarios')
-});
 
 //>>>>>>>>>
 // // servicio para registrar un nuevo usuario
@@ -289,12 +310,14 @@ router.post("/users", function(req, res) {
 });
 // >>>>>>>>>>>>>>>>>>>>
 
+
+
 //servicio para iniciar sesion
 router.post("/sessions",function(req,res){
 
-  Login.find({email:req.body.email, password:req.body.password},function(err,docs){
+  Login.find({email:req.body.email, password:req.body.password},function(err, docs){
     console.log(docs);
-    res.send("hola esta es una ventana diferente");
+    res.render('mostrarResolucion');
   });
 
 });
@@ -315,6 +338,24 @@ router.get('/delete/:id', async (req, res, next) => {
   await Estudiantes.remove({_id: id });
   res.redirect('/');
 });
+
+// servicio para mostrar datos
+//mostrar datos de facultades
+router.get("/facultadesGET", (req, res, next) =>{
+  Facultad.find({}).exec( (error, docs) => {
+      res.status(200).json(docs);
+  })
+});
+
+//mostrar carreras
+router.get("/CarrerasGET", (req, res, next) =>{
+  Career.find({}).exec( (error, docs) => {
+      res.status(200).json(docs);
+  })
+});
+
+
+
 
 
 module.exports = router;
