@@ -210,58 +210,67 @@ router.post('/addAEst', async (req, res)=>{
     gestion : req.body.gestion,
     periodo : req.body.periodo
   };
-  const est = {
-    numResolucion : req.body.nod,
-    numDictamen : req.body.nor,
-    pdf : "",
-    obs : req.body.obs
-  };
   const agrupare = new Agrupare(agr);
   const race = agrupare.carrera;
-  Career.findOne({nombre : race }).exec( async (error, docs)=>{
-    if(error){
-      res.status(200).json({
-        "msn" : error
-      })
-      return
-    }
-    if(docs!= null){
-      await agrupare.save();
-      const ide  = agrupare._id;
-      const estudiante = new Estudiante(est);
-      estudiante.id_a = ide;
-      Agrupare.findOne({_id : ide}).exec( async (err, docs)=>{
-        if(err){
-          res.status(200).json({
-            "msn" : err
-          })
-          return
-        }
-        if(docs!=null){
-          await estudiante.save();
-          var idd = estudiante._id;
 
-        }
-        else{
-          res.send('no existe');
-        }
-        return
-      })
-      res.send('listo');
+  Agrupare.find({ carrera: req.body.carrera , gestion: req.body.gestion,periodo : req.body.periodo}).exec(async (err, docs) =>{
+    if(err ){
+      console.log(docs);
+      res.send(' no encontro');
     }
+
     else{
-      res.status(200).json({
-        "msn": "no se encuentra"
-      })
-      return
+      if(docs == ""){
+        console.log(docs);
+        Career.findOne({nombre : race }).exec( async (error, docs)=>{
+          if(error){
+            res.status(200).json({
+              "msn" : error
+            });
+            return
+          }
+          else {
+            if(docs!= null){
+              await agrupare.save();
+              const ide  = agrupare._id;
+              res.send('listo');
+            }
+            else{
+              res.status(200).json({
+                "msn": "no se encuentra"
+              })
+              return
+            }
+          }
+
+          return
+        })
+      }
+      else{
+        console.log(docs);
+        res.send('encontro');
+      }
+
     }
-    return
   })
+
 //  const docente = new Docente(req.body);
   //const { id } = docente._id;
   //await docente.save();
 });
 
+router.post('/EstDic/:id', async(req, res) =>{
+  const ida = req.params;
+  const est = {
+    numResolucion : req.body.nr,
+    numDictamen : req.body.nd,
+    pdf : "",
+  };
+  const estudiante = new Estudiante(est);
+  Agrupare.findOne({_id : ida.id}).exec( (err, docs) =>{
+
+  })
+})
 
 router.post('/cartEst/:id', async(req, res) =>{
   const  idg = req.params;
@@ -323,6 +332,47 @@ router.post('/cartDoc/:id', async(req, res) =>{
   })
 });
 
+router.get('/filtroG', async (req, res) =>{
+  const params = req.query;
+  const race = params.carrera;
+  const year = params.year;
+  //const periodo = params.periodo;
+  console.log(req.query);
+  console.log(year);
+//  const tipo = params.tipo;
+//db.prueba.find({ $text : { $search: '"Miguel Quijote"'} });
+Agrupare.find({carrera : race, gestion : year}).exec( (err, docs) =>{
+  if (docs){
+    const  idg  = docs;
+    console.log(idg);
+    res.status(200).json({
+      info:  docs,
+
+     });
+  }
+  else{
+    res.status(201).json({
+        "msn" : "no existe "
+      });
+  }
+})
+});
+
+router.get('/filtroRes/:id', async(req, res) =>{
+  const idg = req.params;
+  Estudiante.find({id_a : (idg.id)}).exec( (err, docs) =>{
+    if(docs){
+      res.status(200).json({
+        info:  docs
+       });
+    }
+    else {
+      res.status(201).json({
+          "msn" : "no existen "
+        });
+    }
+  })
+});
 // metodo actualizar
 //>>>>>>>>>>>>>><
 // este servicio sirve para cambiar de pestaña recuperando el ID

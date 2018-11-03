@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = require("mongoose").Schema;
-var agrSchema = {
+const agrSchema = {
   carrera : String,
   gestion: String,
   periodo: String,
