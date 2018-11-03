@@ -141,17 +141,17 @@ router.post('/addResDoc/:id', async (req, res) =>{
     else {
       if(docs != ""){
         const ida = docs.id;
+        docente.ida_a= ida.id;
+        await docente.save();
         res.status(200).json({
           "id" : docs,
           "msn" : "existe "
         });
       }
       else {
-        docente.ida_a= ida.id;
-        await docente.save();
-        const d = docente._id;
+
         res.status(200).json({
-          "id" : docs,
+          "id" : error,
           "info" : d
         })
       }
