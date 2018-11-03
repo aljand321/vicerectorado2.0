@@ -125,15 +125,38 @@ router.post('/addResEstu', async (req, res) => {
   res.redirect('/');
 });
 
-router.post('/addResDoc', async (req, res) =>{
+router.post('/addResDoc/:id', async (req, res) =>{
+  const ida = req.params;
+
   const dc = {
-    nod : req.body.nod,
-    nor : req.body.nor,
+    noresolucion : req.body.nod,
+    nodictamen : req.body.nor,
     obs : req.body.obs
   };
   const docente = new Docente(dc);
-  await docente.save();
-  const ida = docente._id;
+  Agrupard.findOne({_id : (ida.id)}).exec( async (err, docs) =>{
+    if(err){
+      res.send(err);
+    }
+    else {
+      if(docs != ""){
+        const ida = docs.id;
+        res.status(200).json({
+          "id" : docs,
+          "msn" : "existe "
+        });
+      }
+      else {
+        docente.ida_a= ida.id;
+        await docente.save();
+        const d = docente._id;
+        res.status(200).json({
+          "id" : docs,
+          "info" : d
+        })
+      }
+    }
+  })
 });
 
 /*router.post('/env', upload.any(), function (req, res, next){
