@@ -154,57 +154,48 @@ router.post('/env', function (req, res){
 //servicio para añadir a agrupar docente
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post('/addADoc', async (req, res)=>{
+  // const { id } = req.params;
+  // const idaDOC   = await Agrupard.findById(id);
   const agr = {
     carrera : req.body.carrera,
     gestion : req.body.gestion,
     periodo : req.body.periodo
   };
-  const dc = {
-    nod : req.body.nod,
-    nor : req.body.nor,
-    pdf : "",
-    obs : req.body.obs
-  };
   const agrupard = new Agrupard(agr);
   const race = agrupard.carrera;
-  Career.findOne({nombre : race }).exec( async (error, docs)=>{
-    if(error){
-      res.status(200).json({
-        "msn" : error
-      })
-      return
-    }
-    if(docs!= null){
-      await agrupard.save();
-      const ida  = agrupard._id;
-      const docente = new Docente(dc);
-      docente.id_a = ida;
-      Agrupard.findOne({_id : ida}).exec( async (err, docs)=>{
-        if(err){
-          res.status(200).json({
-            "msn" : err
-          })
-          return
-        }
-        if(docs!=null){
-          await docente.save();
-          var idd = docente._id;
-        }
-        else{
-          res.send('no existe');
-        }
-        return
-      })
-      res.render('grupoDocentes');
-      // res .render('')
+  Agrupard.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo}).exec( (err, docs) => {
+    if(err){
+      res.send('error');
     }
     else{
-      res.status(200).json({
-        "msn": "no se encuentra"
-      })
-      return
+      if(docs != ""){
+        const ida= docs._id;
+        console.log(docs);
+        res.render('insertarResolucionDoc',{
+          docs
+        });
+        // res.status(200).json({
+        //   "id" : docs._id,
+        //   "msn" : "existe "
+        // });
+      }
+      else {
+        Career.findOne({carrera : race}).exec( async(error, dc) =>{
+          if(error){
+            res.status(200).json({
+              "msn" : "errorrr "
+            });
+          }
+          else {
+            await agrupard.save();
+            res.status(200).json({
+              "ida": agrupard._id,
+              "msn":"creado"
+            })
+          }
+        })
+      }
     }
-    return
   })
 //  const docente = new Docente(req.body);
   //const { id } = docente._id;
@@ -257,6 +248,7 @@ router.post('/addAEst', async (req, res)=>{
       else{
         console.log(docs);
         res.send('encontro');
+        res.send(docs._id);
       }
 
     }
@@ -266,6 +258,8 @@ router.post('/addAEst', async (req, res)=>{
   //const { id } = docente._id;
   //await docente.save();
 });
+
+
 
 router.post('/EstDic/:id', async(req, res) =>{
   const ida = req.params;
