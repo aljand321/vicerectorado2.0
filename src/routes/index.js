@@ -7,7 +7,7 @@ const fs = require('fs');
 //const Teacher = require('../models/CartaDocente');
 
 //aljand
-//const Estudiantes = require('../models/estudiantes');
+const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
 //>>>>>>>>>>>>>>>>>>>
 
@@ -18,7 +18,7 @@ const bodyParser = require('body-parser');
 const Agrupare = require('../models/agruparestudiante');
 const Agrupard = require('../models/agrupardocente');
 const Docente = require('../models/ResolucionDocente');
-const Estudiante = require('../models/ResolucionEstudiante');
+// const Estudiante = require('../models/ResolucionEstudiante');
 const Student = require('../models/CartaEstudiante');
 const Teacher = require('../models/CartaDocente');
 
