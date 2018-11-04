@@ -144,10 +144,13 @@ router.post('/addResDoc/:id', async (req, res) =>{
         const ida = docs.id;
         docente.ida_a= ida.id;
         await docente.save();
-        res.status(200).json({
-          "id" : docs,
-          "msn" : "existe "
-        });
+        // const mostrar = Docente.findById(id);
+        // console.log(mostrar);
+        res.render('insertarResolucionDoc');
+        // res.status(200).json({
+        //   "id" : docs,
+        //   "msn" : "se inserto en la tabla resolcion docente "
+        // });
       }
       else {
 
@@ -193,15 +196,17 @@ router.post('/addADoc', async (req, res)=>{
     }
     else{
       if(docs != ""){
-        const ida = docs.carrera;
-        console.log(ida);
-        // res.render('insertarResolucionDoc',{
-        //   "id" : docs._id
-        // });
-        res.status(200).json({
-          "id" : docs._id,
-          "msn" : "existe "
+        const ida = agrupard._id;
+        const resolid = docs;
+        const id = resolid.carrera;
+        console.log(id);
+        res.render('insertarResolucionDoc',{
+          docs
         });
+        // res.status(200).json({
+        //   "id" : docs._id,
+        //   "msn" : "existe "
+        // });
       }
       else {
         Career.findOne({carrera : race}).exec( async(error, dc) =>{
