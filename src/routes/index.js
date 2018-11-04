@@ -125,12 +125,13 @@ router.post('/addResEstu', async (req, res) => {
   res.redirect('/');
 });
 
+//servicio para añdir a resolucion docente
 router.post('/addResDoc/:id', async (req, res) =>{
   const ida = req.params;
 
   const dc = {
-    noresolucion : req.body.nod,
-    nodictamen : req.body.nor,
+    noresolucion : req.body.noresolucion,
+    nodictamen : req.body.nodictamen,
     obs : req.body.obs
   };
   const docente = new Docente(dc);
@@ -192,15 +193,15 @@ router.post('/addADoc', async (req, res)=>{
     }
     else{
       if(docs != ""){
-        const ida= docs._id;
-        console.log(docs);
-        res.render('insertarResolucionDoc',{
-          docs
-        });
-        // res.status(200).json({
-        //   "id" : docs._id,
-        //   "msn" : "existe "
+        const ida = docs.carrera;
+        console.log(ida);
+        // res.render('insertarResolucionDoc',{
+        //   "id" : docs._id
         // });
+        res.status(200).json({
+          "id" : docs._id,
+          "msn" : "existe "
+        });
       }
       else {
         Career.findOne({carrera : race}).exec( async(error, dc) =>{
