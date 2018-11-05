@@ -135,28 +135,51 @@ router.post('/addResDoc/:id', async (req, res) =>{
     obs : req.body.obs
   };
   const docente = new Docente(dc);
-  Agrupard.findOne({_id : (ida.id)}).exec( async (err, docs) =>{
+  Agrupard.find({_id : ida.id}).exec( async (err, docs) =>{
     if(err){
       res.send(err);
     }
     else {
       if(docs != ""){
-        const ida = docs.id;
-        docente.ida_a= ida.id;
-        await docente.save();
+         docente.id_a = ida.id;
+         await docente.save();
         // const mostrar = Docente.findById(id);
         // console.log(mostrar);
-        res.render('insertarResolucionDoc');
-        // res.status(200).json({
-        //   "id" : docs,
-        //   "msn" : "se inserto en la tabla resolcion docente "
+        console.log(docs);
+
+        // res.render('GETresDOC',{
+        //   ida,
+        //   docente
         // });
+        //  res.status(200).json({
+        //   "id" : docente,
+        //   "msn" : "se inserto en la tabla resolcion docente "
+        //
+        // });
+        Docente.find({id_a : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              const g = ida.id;
+              // await  res.send(files);
+              res.render('GETresDOC',{
+                 g,
+                 files
+               });
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
       }
       else {
-
+        // const docente = new Docente(dc);
+        // await docente.save();
         res.status(200).json({
-          "id" : error,
-          "info" : d
+          "msn" : "no encontro"
         })
       }
     }
@@ -196,17 +219,28 @@ router.post('/addADoc', async (req, res)=>{
     }
     else{
       if(docs != ""){
-        const ida = agrupard._id;
+        //const ida = agrupard._id;
         const resolid = docs;
-        const id = resolid.carrera;
-        console.log(id);
-        res.render('insertarResolucionDoc',{
-          docs
-        });
-        // res.status(200).json({
-        //   "id" : docs._id,
-        //   "msn" : "existe "
-        // });
+        //const id = resolid.carrera;
+          const idG = docs[0]._id;
+          Docente.find({id_a : (idG)}).exec( async(err, files)=>{
+            if(err){
+              res.send(err);
+            }
+            else{
+              if(files != ""){
+                // await  res.send(files);
+                res.render('insertarResolucionDoc',{
+                 idG,
+                 files
+                });
+              }
+              else {
+                res.send('no existen los archivos0');
+              }
+            }
+
+          })
       }
       else {
         Career.findOne({carrera : race}).exec( async(error, dc) =>{
