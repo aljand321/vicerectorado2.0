@@ -162,10 +162,10 @@ router.post('/addResDoc/:id', async (req, res) =>{
           }
           else{
             if(files != ""){
-              const g = ida.id;
+              const idG = ida.id;
               // await  res.send(files);
-              res.render('GETresDOC',{
-                 g,
+              res.redirect('insertarResolucionDoc',{
+                 idG,
                  files
                });
             }
@@ -236,7 +236,10 @@ router.post('/addADoc', async (req, res)=>{
                 });
               }
               else {
-                res.send('no existen los archivos0');
+                res.render('insertarResolucionDoc',{
+                 idG,
+                 files
+                });
               }
             }
 
@@ -540,6 +543,14 @@ router.get('/delete/:id', async (req, res, next) => {
   let { id }  = req.params;
   await Estudiantes.remove({_id: id });
   res.redirect('/');
+});
+
+//servicio para elminar resolcion docnetes
+router.get('/deleteResDOC/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Docente.deleteOne({_id: id });
+
+  res.redirect('/insertarResolucionDoc');
 });
 
 // servicio para mostrar datos

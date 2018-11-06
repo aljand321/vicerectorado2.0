@@ -87,16 +87,21 @@
                  </thead>
 
                  <tbody>
+
                    <% for(var i=0; i < files.length; i++) { %>
-                     <tr>
+                      <tr>
                        <td> <%=files[i].noresolucion %> </td>
                        <td> <%=files[i].nodictamen %> </td>
                        <td>  </td>
                        <td> <%=files[i].obs %> </td>
+                       <td>
+                         <a href="/deleteResDOC/<%=files[i]._id %>" class="btn btn-danger">Del</a>
+                       </td>
 
-                     </tr>
+                        </tr>
 
                      <% } %>
+
 
                  </tbody>
 

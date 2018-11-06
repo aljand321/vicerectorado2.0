@@ -93,10 +93,11 @@
                        <td> <%=files[i].noresolucion %> </td>
                        <td> <%=files[i].nodictamen %> </td>
                        <td>  </td>
-                       <td> <%=files[i].obs %> </td>
-
+                       <td> <%=files[i].obs %></td>
+                       <td>
+                         <a href="/deleteResDOC/<%=files[i]._id %>" class="btn btn-danger">Del</a>
+                       </td>
                      </tr>
-
                      <% } %>
 
                  </tbody>
