@@ -143,19 +143,7 @@ router.post('/addResDoc/:id', async (req, res) =>{
       if(docs != ""){
          docente.id_a = ida.id;
          await docente.save();
-        // const mostrar = Docente.findById(id);
-        // console.log(mostrar);
         console.log(docs);
-
-        // res.render('GETresDOC',{
-        //   ida,
-        //   docente
-        // });
-        //  res.status(200).json({
-        //   "id" : docente,
-        //   "msn" : "se inserto en la tabla resolcion docente "
-        //
-        // });
         Docente.find({id_a : (ida.id)}).exec( async (erro, files) =>{
           if(erro){
             res.send(erro);
@@ -164,10 +152,10 @@ router.post('/addResDoc/:id', async (req, res) =>{
             if(files != ""){
               const idG = ida.id;
               // await  res.send(files);
-              res.redirect('GETresDOC',{
-                 idG,
-                 files
-               });
+              res.render("insertarResolucionDoc",{
+                idG,
+                files
+              });
             }
             else {
               res.send('no existen los archivos0');
@@ -186,6 +174,12 @@ router.post('/addResDoc/:id', async (req, res) =>{
   })
 });
 
+// router.get('/MostrarRESdoc', async (req, res) => {
+//   const GetDocente = await Agrupard.find();
+//   res.render('grupoDocentes',{
+//     GetDocente
+//   });
+// });
 /*router.post('/env', upload.any(), function (req, res, next){
   res.send(req.files);
 });*/
@@ -616,8 +610,7 @@ router.get('/delete/:id', async (req, res, next) => {
 router.get('/deleteResDOC/:id', async (req, res, next) => {
   let { id } = req.params;
   await Docente.deleteOne({_id: id });
-
-  res.redirect('/insertarResolucionDoc');
+  res.render('/insertarResolucionDoc');
 });
 
 // servicio para mostrar datos
