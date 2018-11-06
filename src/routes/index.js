@@ -164,7 +164,7 @@ router.post('/addResDoc/:id', async (req, res) =>{
             if(files != ""){
               const idG = ida.id;
               // await  res.send(files);
-              res.redirect('insertarResolucionDoc',{
+              res.redirect('GETresDOC',{
                  idG,
                  files
                });
