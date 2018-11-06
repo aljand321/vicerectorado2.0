@@ -143,6 +143,8 @@ router.post('/addResDoc/:id', async (req, res) =>{
       if(docs != ""){
         const ida = docs.id;
         docente.ida_a= ida.id;
+
+
         await docente.save();
         // const mostrar = Docente.findById(id);
         // console.log(mostrar);
@@ -167,15 +169,69 @@ router.post('/addResDoc/:id', async (req, res) =>{
   res.send(req.files);
 });*/
 
-router.post('/env', function (req, res){
-  upload(req, res, function (err){
+/*router.post('/env/:univ', async (req, res)=>{
+const id = req.params;
+ upload ( req,  res, async  (err) =>{
     if(err){
       res.send('err');
       return ;
     }
-    res.send('img');
-    return;
+    else {
+      res.send('img');
+      console.log(req.file);
+      const ruta = req.file.path.substr(6, req.file.path.length);
+      const archivo = {
+      id_ref : id.univ,
+      name : req.file.originalname,
+      physicalpath : req.file.path,
+      relativepath: "http://localhost:3000" + ruta
+    };
+    const pdfDato = new Pdf(archivo);
+    pdfDato.save();
+      var files ={
+      pdf : new Array()
+    };
+    Student.find({_id : id.univ}).exec( (err, arc)=>{
+    var pdf = arc.pdf;
+    var aux = new Array();
+    if(pdf.length == 1 && pdf[0] =="")
   })
+
+
+      return;
+    }
+  })
+});*/
+
+router.post('/env', async(req, res)=>{
+var univ = {
+  nombre :req.body.nombre,
+  apellido : req.body.apellido
+};
+var uData = new Student(univ);
+Student.find({nombre : req.body.nombre, apellido: req.body.apellido}, {"nombre" : 1}).exec( async (err, docs)=>{
+console.log(docs);
+  if(docs =! "")
+  {
+    upload (req, res, (err) =>{
+      if(err){
+        res.status(500).json({
+            "msn" : "No se ha podido "
+          });
+      }
+      else{
+        res.send('img');
+        console.log(req.file);
+      }
+
+    });
+  }
+  else{
+    res.send("inserte un doc");
+    await uData.save();
+  }
+
+})
 });
 
 //servicio para añadir a agrupar docente
@@ -188,18 +244,15 @@ router.post('/addADoc', async (req, res)=>{
     gestion : req.body.gestion,
     periodo : req.body.periodo
   };
-  const agrupard = new Agrupard(agr);
-  const race = agrupard.carrera;
-  Agrupard.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo}).exec( (err, docs) => {
+  Agrupard.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo}, {"_id" :1}).exec( (err, docs) => {
     if(err){
       res.send('error');
     }
     else{
       if(docs != ""){
-        const ida = agrupard._id;
         const resolid = docs;
         const id = resolid.carrera;
-        console.log(id);
+        console.log(docs);
         res.render('insertarResolucionDoc',{
           docs
         });
@@ -209,6 +262,8 @@ router.post('/addADoc', async (req, res)=>{
         // });
       }
       else {
+        const agrupard = new Agrupard(agr);
+        const race = agrupard.carrera;
         Career.findOne({carrera : race}).exec( async(error, dc) =>{
           if(error){
             res.status(200).json({
@@ -492,6 +547,19 @@ router.post("/sessions",function(req,res){
 });
 //>>>>>>>>>>
 
+router.post('/logeado', async (req, res) =>{
+  Login.find({email:req.body.email, password:req.body.password}).exec( (err, docs)=> {
+    console.log(docs);
+    if(docs != ""){
+      //res.render('mostrarResolucion');
+      res.send('aqui estoy');
+    }
+    else{
+      //res.render('index');
+      res.send('no hay');
+    }
+  })
+});
 //servicio para mostrar datos del login
 router.get("/user", function(req, res){
   Login.find(function(err, doc){
