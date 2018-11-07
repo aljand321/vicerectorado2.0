@@ -155,11 +155,6 @@ router.post('/addResDoc/:id', async (req, res) =>{
           else{
             if(files != ""){
               idGlobalDocente = ida.id;
-              // await  res.send(files);
-              // res.render('insertarResolucionDoc',{
-              //   idG,
-              //   files
-              // });
               res.redirect("/MostrarRESdoc");
             }
             else {
@@ -169,8 +164,6 @@ router.post('/addResDoc/:id', async (req, res) =>{
         })
       }
       else {
-        // const docente = new Docente(dc);
-        // await docente.save();
         res.status(200).json({
           "msn" : "no encontro"
         })
@@ -186,8 +179,8 @@ router.get('/deleteResDOC/:id', async (req, res, next) => {
   res.redirect('/MostrarRESdoc');
 });
 
+// /servicio para mostrar resolucion docentes
 router.get('/MostrarRESdoc', async (req, res) => {
-
   Docente.find({id_a : (idGlobalDocente)}).exec( async (erro, files) =>{
     if(erro){
       res.send(erro);
@@ -209,20 +202,13 @@ router.get('/MostrarRESdoc', async (req, res) => {
       }
     }
   })
-  // console.log(data);
-  // res.send('hola');
-  // // res.render('GETresDOC',{
-  // //   idGu,
-  // //   data
-  // // });
 });
 
 
 /*router.post('/env', upload.any(), function (req, res, next){
   res.send(req.files);
 });*/
-
-/*router.post('/env/:univ', async (req, res)=>{
+router.post('/env/:univ', async (req, res)=>{
 const id = req.params;
  upload ( req,  res, async  (err) =>{
     if(err){
@@ -230,33 +216,75 @@ const id = req.params;
       return ;
     }
     else {
-      res.send('img');
+      //res.send('img');
       console.log(req.file);
-      const ruta = req.file.path.substr(6, req.file.path.length);
-      const archivo = {
+      var ruta = req.file.path.substr(6, req.file.path.length);
+      var archivo = {
       id_ref : id.univ,
       name : req.file.originalname,
       physicalpath : req.file.path,
       relativepath: "http://localhost:3000" + ruta
     };
-    const pdfDato = new Pdf(archivo);
-    pdfDato.save();
+    var pdfDato = new Pdf(archivo);
+    await pdfDato.save();
+
       var files ={
       pdf : new Array()
     };
-    Student.find({_id : id.univ}).exec( (err, arc)=>{
-    var pdf = arc.pdf;
+    await Student.find({_id : id.univ}).exec( async(err, arc)=>{
+    var pdf = arc[0].pdf;
     var aux = new Array();
-    if(pdf.length == 1 && pdf[0] =="")
-  })
+    console.log(pdf);
+      if(pdf.length == 1 && pdf[0] ==""){
+        files.pdf.push("/env/"+pdfDato._id);
+      }
+      else{
+      aux.push("/env/"+pdfDato._id);
+      pdf= pdf.concat(aux);
+      files.pdf = pdf;
+    }
+    await Student.findOneAndUpdate({_id : id.univ},files,(err, params) =>{
+          if (err) {
+                    res.status(500).json({
+                      "msn" : "error en la actualizacion del pdf"
+                    });
+                    return;
+                  }
+                  res.status(200).json(
+                    req.file
 
-
-      return;
+                  );
+                  return;
+            });
+        })
     }
   })
-});*/
+});
 
-router.post('/env', async(req, res)=>{
+router.get('/archivo/:dc', (res, req) =>{
+  const id= req.params;
+  Pdf.findOne({_id : id.dc}).exec((err, pdfs) =>{
+    if(err){
+      res.status(500).json({
+        message : 'error'
+      });
+    }
+    else{
+      if(pdfs != ""){
+        var file = fs.readFileSync("./"+pdfs.physicalpath);
+        res.contentType('application/pdf');
+        res.status(200).send(file);
+      }
+      else{
+        res.status(424).json({
+          "msn": "La solicitud falló, ,la imagen fue eliminada"
+        });
+        return;
+      }
+    }
+  })
+});
+/*router.post('/env', async(req, res)=>{
 var univ = {
   nombre :req.body.nombre,
   apellido : req.body.apellido
@@ -285,7 +313,7 @@ console.log(docs);
   }
 
 })
-});
+});*/
 
 //servicio para añadir a agrupar docente
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -301,9 +329,7 @@ router.post('/addADoc', async (req, res)=>{
     }
     else{
       if(docs != ""){
-        //const ida = agrupard._id;
         const resolid = docs;
-        //const id = resolid.carrera;
            idGlobalDocente = docs[0]._id;
           Docente.find({id_a : (idGlobalDocente)}).exec( async(err, files)=>{
             if(err){
@@ -331,18 +357,19 @@ router.post('/addADoc', async (req, res)=>{
           }
           else {
             await agrupard.save();
-            res.status(200).json({
-              "ida": agrupard._id,
-              "msn":"creado"
-            })
+            idGlobalDocente = agrupard._id;
+            // idGlobalDocente = ida;
+            console.log(idGlobalDocente);
+            res.redirect('MostrarRESdoc')
+            // res.status(200).json({
+            //   "ida": agrupard._id,
+            //   "msn":"creado"
+            // })
           }
         })
       }
     }
   })
-//  const docente = new Docente(req.body);
-  //const { id } = docente._id;
-  //await docente.save();
 });
 
 
@@ -396,14 +423,7 @@ router.post('/addAEst', async (req, res)=>{
 
     }
   })
-
-//  const docente = new Docente(req.body);
-  //const { id } = docente._id;
-  //await docente.save();
 });
-
-
-
 router.post('/EstDic/:id', async(req, res) =>{
   const ida = req.params;
   const est = {
@@ -628,15 +648,11 @@ router.get("/user", function(req, res){
 });
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
 router.get('/delete/:id', async (req, res, next) => {
   let { id }  = req.params;
   await Estudiantes.remove({_id: id });
   res.redirect('/');
 });
-
-
-
 // servicio para mostrar datos
 //mostrar datos de facultades
 router.get("/facultadesGET", (req, res, next) =>{
@@ -651,9 +667,4 @@ router.get("/CarrerasGET", (req, res, next) =>{
       res.status(200).json(docs);
   })
 });
-
-
-
-
-
 module.exports = router;

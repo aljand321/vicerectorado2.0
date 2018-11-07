@@ -37,15 +37,13 @@
   </form>
   </div>
   </nav>
-  <br><br>
+  <br><br><br><br><br>
 
   <div class="container">
           <div class="row">
-            <div class="col-md-5" >
+            <div class="col-md-5 offset-md-3">
               <div class="card">
                 <div class="card-body">
-
-
                   <form class="" action="/addADoc" method="POST">
                     <div class="form-group">
                       <!-- <input type="text" name="numResolucion" class="form-control" value="Carrera" > -->
@@ -75,34 +73,11 @@
 
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">Insertar<Datos></Datos></button>
+                    <button type="submit" class="btn btn-primary btn-block">Buscar<Datos></Datos></button>
 
                   </form>
                 </div>
               </div>
-            </div>
-            <div class="col-md-7">
-              <table class="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th>Carrera</th>
-                    <th>Gestion</th>
-                    <th>Periodo academico</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <% for(var i=0; i < GetDocente.length; i++) { %>
-                    <tr>
-                      <td> <%=GetDocente[i].carrera %> </td>
-                      <td> <%=GetDocente[i].gestion %> </td>
-                      <td> <%=GetDocente[i].periodo %> </td>
-                    </tr>
-                  <% } %>
-                </tbody>
-
-              </table>
-
             </div>
 
           </div>
