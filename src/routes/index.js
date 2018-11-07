@@ -183,7 +183,7 @@ router.post('/addResDoc/:id', async (req, res) =>{
 router.get('/deleteResDOC/:id', async (req, res, next) => {
   let { id } = req.params;
   await Docente.deleteOne({_id: id });
-  res.redirect('/GETresDOC');
+  res.redirect('/MostrarRESdoc');
 });
 
 router.get('/MostrarRESdoc', async (req, res) => {
@@ -195,14 +195,17 @@ router.get('/MostrarRESdoc', async (req, res) => {
     else{
       if(files != ""){
 
-        res.render('GETresDOC',{
+        res.render('insertarResolucionDoc',{
             idGlobalDocente,
             files
         });
       }
       else {
         console.log(idGlobalDocente)
-        res.send('no existen los archivos0');
+        res.render('insertarResolucionDoc',{
+            idGlobalDocente,
+            files
+        });
       }
     }
   })
@@ -287,8 +290,6 @@ console.log(docs);
 //servicio para añadir a agrupar docente
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post('/addADoc', async (req, res)=>{
-  // const { id } = req.params;
-  // const idaDOC   = await Agrupard.findById(id);
   const agr = {
     carrera : req.body.carrera,
     gestion : req.body.gestion,
@@ -303,24 +304,17 @@ router.post('/addADoc', async (req, res)=>{
         //const ida = agrupard._id;
         const resolid = docs;
         //const id = resolid.carrera;
-          const idG = docs[0]._id;
-          Docente.find({id_a : (idG)}).exec( async(err, files)=>{
+           idGlobalDocente = docs[0]._id;
+          Docente.find({id_a : (idGlobalDocente)}).exec( async(err, files)=>{
             if(err){
               res.send(err);
             }
             else{
               if(files != ""){
-                // await  res.send(files);
-                res.render('insertarResolucionDoc',{
-                 idG,
-                 files
-                });
+                res.redirect('MostrarRESdoc');
               }
               else {
-                res.render('insertarResolucionDoc',{
-                 idG,
-                 files
-                });
+                res.redirect('MostrarRESdoc');
               }
             }
 
