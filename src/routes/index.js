@@ -169,7 +169,7 @@ router.post('/addResDoc/:id', async (req, res) =>{
   res.send(req.files);
 });*/
 
-/*router.post('/env/:univ', async (req, res)=>{
+router.post('/env/:univ', async (req, res)=>{
 const id = req.params;
  upload ( req,  res, async  (err) =>{
     if(err){
@@ -177,33 +177,75 @@ const id = req.params;
       return ;
     }
     else {
-      res.send('img');
+      //res.send('img');
       console.log(req.file);
-      const ruta = req.file.path.substr(6, req.file.path.length);
-      const archivo = {
+      var ruta = req.file.path.substr(6, req.file.path.length);
+      var archivo = {
       id_ref : id.univ,
       name : req.file.originalname,
       physicalpath : req.file.path,
       relativepath: "http://localhost:3000" + ruta
     };
-    const pdfDato = new Pdf(archivo);
-    pdfDato.save();
+    var pdfDato = new Pdf(archivo);
+    await pdfDato.save();
+
       var files ={
       pdf : new Array()
     };
-    Student.find({_id : id.univ}).exec( (err, arc)=>{
-    var pdf = arc.pdf;
+    await Student.find({_id : id.univ}).exec( async(err, arc)=>{
+    var pdf = arc[0].pdf;
     var aux = new Array();
-    if(pdf.length == 1 && pdf[0] =="")
-  })
+    console.log(pdf);
+      if(pdf.length == 1 && pdf[0] ==""){
+        files.pdf.push("/env/"+pdfDato._id);
+      }
+      else{
+      aux.push("/env/"+pdfDato._id);
+      pdf= pdf.concat(aux);
+      files.pdf = pdf;
+    }
+    await Student.findOneAndUpdate({_id : id.univ},files,(err, params) =>{
+          if (err) {
+                    res.status(500).json({
+                      "msn" : "error en la actualizacion del pdf"
+                    });
+                    return;
+                  }
+                  res.status(200).json(
+                    req.file
 
-
-      return;
+                  );
+                  return;
+            });
+        })
     }
   })
-});*/
+});
 
-router.post('/env', async(req, res)=>{
+router.get('/archivo/:dc', (res, req) =>{
+  const id= req.params;
+  Pdf.findOne({_id : id.dc}).exec((err, pdfs) =>{
+    if(err){
+      res.status(500).json({
+        message : 'error'
+      });
+    }
+    else{
+      if(pdfs != ""){
+        var file = fs.readFileSync("./"+pdfs.physicalpath);
+        res.contentType('application/pdf');
+        res.status(200).send(file);
+      }
+      else{
+        res.status(424).json({
+          "msn": "La solicitud falló, ,la imagen fue eliminada"
+        });
+        return;
+      }
+    }
+  })
+});
+/*router.post('/env', async(req, res)=>{
 var univ = {
   nombre :req.body.nombre,
   apellido : req.body.apellido
@@ -232,7 +274,7 @@ console.log(docs);
   }
 
 })
-});
+});*/
 
 //servicio para añadir a agrupar docente
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
