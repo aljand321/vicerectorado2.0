@@ -9,6 +9,7 @@ const fs = require('fs');
 //aljand
 const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
+const Data = require('../models/data');
 //>>>>>>>>>>>>>>>>>>>
 
 //const Student = require('../models/student');
@@ -23,6 +24,9 @@ const Student = require('../models/CartaEstudiante');
 const Teacher = require('../models/CartaDocente');
 
 const Pdf = require('../models/pdf');
+
+
+// const Data = require('../views/insertarResolucionDoc.ejs')
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb){
@@ -125,10 +129,10 @@ router.post('/addResEstu', async (req, res) => {
   res.redirect('/');
 });
 
+var idGlobalDocente;
 //servicio para añdir a resolucion docente
 router.post('/addResDoc/:id', async (req, res) =>{
   const ida = req.params;
-
   const dc = {
     noresolucion : req.body.noresolucion,
     nodictamen : req.body.nodictamen,
@@ -150,12 +154,13 @@ router.post('/addResDoc/:id', async (req, res) =>{
           }
           else{
             if(files != ""){
-              const idG = ida.id;
+              idGlobalDocente = ida.id;
               // await  res.send(files);
-              res.render("insertarResolucionDoc",{
-                idG,
-                files
-              });
+              // res.render('insertarResolucionDoc',{
+              //   idG,
+              //   files
+              // });
+              res.redirect("/MostrarRESdoc");
             }
             else {
               res.send('no existen los archivos0');
@@ -174,12 +179,42 @@ router.post('/addResDoc/:id', async (req, res) =>{
   })
 });
 
-// router.get('/MostrarRESdoc', async (req, res) => {
-//   const GetDocente = await Agrupard.find();
-//   res.render('grupoDocentes',{
-//     GetDocente
-//   });
-// });
+//servicio para elminar resolcion docnetes
+router.get('/deleteResDOC/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Docente.deleteOne({_id: id });
+  res.redirect('/GETresDOC');
+});
+
+router.get('/MostrarRESdoc', async (req, res) => {
+
+  Docente.find({id_a : (idGlobalDocente)}).exec( async (erro, files) =>{
+    if(erro){
+      res.send(erro);
+    }
+    else{
+      if(files != ""){
+
+        res.render('GETresDOC',{
+            idGlobalDocente,
+            files
+        });
+      }
+      else {
+        console.log(idGlobalDocente)
+        res.send('no existen los archivos0');
+      }
+    }
+  })
+  // console.log(data);
+  // res.send('hola');
+  // // res.render('GETresDOC',{
+  // //   idGu,
+  // //   data
+  // // });
+});
+
+
 /*router.post('/env', upload.any(), function (req, res, next){
   res.send(req.files);
 });*/
@@ -606,12 +641,7 @@ router.get('/delete/:id', async (req, res, next) => {
   res.redirect('/');
 });
 
-//servicio para elminar resolcion docnetes
-router.get('/deleteResDOC/:id', async (req, res, next) => {
-  let { id } = req.params;
-  await Docente.deleteOne({_id: id });
-  res.render('/insertarResolucionDoc');
-});
+
 
 // servicio para mostrar datos
 //mostrar datos de facultades
