@@ -137,6 +137,7 @@ router.post('/addResDoc/:id', async (req, res) =>{
   const dc = {
     noresolucion : req.body.noresolucion,
     nodictamen : req.body.nodictamen,
+    pdf : "",
     obs : req.body.obs
   };
   const docente = new Docente(dc);
@@ -254,7 +255,7 @@ const id = req.params;
       pdf : new Array()
     };
     await Docente.find({_id : id.dc}).exec( async(err, arc)=>{
-    var pdf = arc.pdf;
+    var pdf = arc[0].pdf;
     var aux = new Array();
     console.log(pdf);
       if(pdf.length == 1 && pdf[0] ==""){
