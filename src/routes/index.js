@@ -776,16 +776,17 @@ router.post('/ADDagEST', async (req, res)=>{
       if(docs != ""){
         const resolid = docs;
            idGlobalEstudiante = docs[0]._id;
+           console.log(idGlobalEstudiante + "   aqui >>>><<<<<<");
           Estudiantes.find({id_a : (idGlobalEstudiante)}).exec( async(err, files)=>{
             if(err){
               res.send(err);
             }
             else{
               if(files != ""){
-                res.redirect('');
+                res.redirect('/MostrarRESest');
               }
               else {
-                res.redirect('');
+                res.redirect('/MostrarRESest');
               }
             }
 
@@ -804,8 +805,8 @@ router.post('/ADDagEST', async (req, res)=>{
             await agrupard.save();
             idGlobalEstudiante = agrupard._id;
             // idGlobalDocente = ida;
-            console.log(idGlobalEstudiante);
-            res.redirect('')
+            console.log(idGlobalEstudiante + " otro aqui");
+            res.redirect('MostrarRESest')
             // res.status(200).json({
             //   "ida": agrupard._id,
             //   "msn":"creado"
@@ -825,12 +826,10 @@ router.get('/MostrarRESest', async (req, res) => {
     }
     else{
       if(files != ""){
-
-
         res.render('insertarResolEst',{
             idGlobalEstudiante,
             files,
-            idPDF
+            idPDFest
         });
       }
       else {
@@ -838,11 +837,94 @@ router.get('/MostrarRESest', async (req, res) => {
         res.render('insertarResolEst',{
             idGlobalEstudiante,
             files,
-            idPDF
+            idPDFest
+
         });
       }
     }
   })
 });
+// />>>>>>>>>>>>>>>>>>>>>>>>>>
+var idPDFest;
+//servicio para añadir resolucion a estudiante
+router.post('/addResEst/:id', async (req, res) =>{
+  const ida = req.params;
+  const est = {
+    numResolucion : req.body.numResolucion,
+    numDictamen : req.body.numDictamen,
+    obs : req.body.obs
+  };
+  const estudiente = new Estudiantes(est);
+  Agrupare.find({_id : ida.id}).exec( async (err, docs) =>{
+    if(err){
+      res.send(err);
+    }
+    else {
+      if(docs != ""){
+         estudiente.id_a = ida.id;
+         await estudiente.save();
+        console.log(docs);
+        //esto va a mostrar solo la resolcion insertada
+        Estudiantes.findOne({id_a : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              idPDFest = estudiente._id;
+              console.log("Este es le id para el pdf:>) "+idPDFest+" (<: ");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+        Estudiantes.find({id_a : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              idGlobalEstudiante = ida.id;
+              res.redirect("/MostrarRESest");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+      }
+      else {
+        res.status(200).json({
+          "msn" : "no encontro"
+        })
+      }
+    }
+  })
+});
+//servicio para elminar resolcion Estudiante
+router.get('/deleteResEST/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Estudiantes.deleteOne({_id: id });
+  res.redirect('/MostrarRESest');
+});
+
+//este servicio sirve para actualizar datos de un formulario
+router.post('/editRESestt/:id', async (req, res) => {
+  const { id } = req.params;
+  await Estudiantes.update({_id: id}, req.body);
+  res.redirect('/MostrarRESest');
+});
+
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/form_paraEditarResEST/:id', async (req, res) => {
+  const { id } = req.params;
+  const mostrar = await Estudiantes.findById(id);
+  res.render('editarRESest', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
+  });
+});
+//>>>>>>>>>>>>>>>
+
 
 module.exports = router;
