@@ -195,7 +195,7 @@ router.get('/deleteResDOC/:id', async (req, res, next) => {
   res.redirect('/MostrarRESdoc');
 });
 
-// /servicio para mostrar resolucion docentes
+// servicio para mostrar resolucion docentes
 router.get('/MostrarRESdoc', async (req, res) => {
   Docente.find({id_a : (idGlobalDocente)}).exec( async (erro, files) =>{
     if(erro){
@@ -742,7 +742,7 @@ router.get("/CarrerasGET", (req, res, next) =>{
   })
 });
 
-
+// servicio para mostrar todos los decentes que es el inicio
 router.get("/allGETres", async(req, res) => {
   const RESdoc = await Docente.find();
   res.render('mostrarResolucion',{
@@ -750,5 +750,99 @@ router.get("/allGETres", async(req, res) => {
   });
 });
 
+//servicios para el estudiente
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// este servico es para mostrar grupo estudiantes
+router.get('/gEST', async (req, res) => {
+  res.render('grupoEstudiante');
+});
+//>>>>>>>>>>>>>>>>>>>>
+
+// >>>>>>>>>>>>>>
+var idGlobalEstudiante;
+// servioco para añadir a agrupar estudiante
+router.post('/ADDagEST', async (req, res)=>{
+  const agr = {
+    carrera : req.body.carrera,
+    gestion : req.body.gestion,
+    periodo : req.body.periodo,
+    tipoBeca : req.body.tipoBeca
+  };
+  Agrupare.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo, tipoBeca : req.body.tipoBeca}, {"_id" :1}).exec( (err, docs) => {
+    if(err){
+      res.send('error');
+    }
+    else{
+      if(docs != ""){
+        const resolid = docs;
+           idGlobalEstudiante = docs[0]._id;
+          Estudiantes.find({id_a : (idGlobalEstudiante)}).exec( async(err, files)=>{
+            if(err){
+              res.send(err);
+            }
+            else{
+              if(files != ""){
+                res.redirect('');
+              }
+              else {
+                res.redirect('');
+              }
+            }
+
+          })
+      }
+      else {
+        const agrupard = new Agrupare(agr);
+        const race = agrupard.carrera;
+        Career.findOne({carrera : race}).exec( async(error, dc) =>{
+          if(error){
+            res.status(200).json({
+              "msn" : "errorrr "
+            });
+          }
+          else {
+            await agrupard.save();
+            idGlobalEstudiante = agrupard._id;
+            // idGlobalDocente = ida;
+            console.log(idGlobalEstudiante);
+            res.redirect('')
+            // res.status(200).json({
+            //   "ida": agrupard._id,
+            //   "msn":"creado"
+            // })
+          }
+        })
+      }
+    }
+  })
+});
+
+// servicio para mostrar resolucion docentes
+router.get('/MostrarRESest', async (req, res) => {
+  Estudiantes.find({id_a : (idGlobalEstudiante)}).exec( async (erro, files) =>{
+    if(erro){
+      res.send(erro);
+    }
+    else{
+      if(files != ""){
+
+
+        res.render('insertarResolEst',{
+            idGlobalEstudiante,
+            files,
+            idPDF
+        });
+      }
+      else {
+        console.log(idGlobalDocente)
+        res.render('insertarResolEst',{
+            idGlobalEstudiante,
+            files,
+            idPDF
+        });
+      }
+    }
+  })
+});
 
 module.exports = router;
