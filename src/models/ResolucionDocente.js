@@ -6,7 +6,7 @@ var cardocSchema = {
   pdf :Array,
   obs: String,
   id_a: {type: Schema.ObjectId, ref: "agrupard"},
-  fecha : String
+  fecha : Date
 
 };
 var docente = mongoose.model("docente", cardocSchema);

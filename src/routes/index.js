@@ -130,6 +130,7 @@ router.post('/addResEstu', async (req, res) => {
 });
 
 var idGlobalDocente;
+var idPDF;
 //servicio para añdir a resolucion docente
 router.post('/addResDoc/:id', async (req, res) =>{
   const ida = req.params;
@@ -148,6 +149,21 @@ router.post('/addResDoc/:id', async (req, res) =>{
          docente.id_a = ida.id;
          await docente.save();
         console.log(docs);
+        //esto va a mostrar solo la resolcion insertada
+        Docente.findOne({id_a : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              idPDF = docente._id;
+              console.log("Este es le id para el pdf:>) "+idPDF+" (<: ");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
         Docente.find({id_a : (ida.id)}).exec( async (erro, files) =>{
           if(erro){
             res.send(erro);
@@ -188,16 +204,19 @@ router.get('/MostrarRESdoc', async (req, res) => {
     else{
       if(files != ""){
 
+
         res.render('insertarResolucionDoc',{
             idGlobalDocente,
-            files
+            files,
+            idPDF
         });
       }
       else {
         console.log(idGlobalDocente)
         res.render('insertarResolucionDoc',{
             idGlobalDocente,
-            files
+            files,
+            idPDF
         });
       }
     }
@@ -208,6 +227,60 @@ router.get('/MostrarRESdoc', async (req, res) => {
 /*router.post('/env', upload.any(), function (req, res, next){
   res.send(req.files);
 });*/
+
+// servicio para añadir pdf a resolcion docente
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+router.post('/senddoc/:dc', async (req, res)=>{
+const id = req.params;
+ upload ( req,  res, async  (err) =>{
+    if(err){
+      res.send('err');
+      return ;
+    }
+    else {
+      //res.send('img');
+      console.log(req.file);
+      var ruta = req.file.path.substr(6, req.file.path.length);
+      var archivo = {
+      id_ref : id.dc,
+      name : req.file.originalname,
+      physicalpath : req.file.path,
+      relativepath: "http://localhost:3000" + ruta
+    };
+    var pdfDato = new Pdf(archivo);
+    await pdfDato.save();
+
+      var files ={
+      pdf : new Array()
+    };
+    await Docente.find({_id : id.dc}).exec( async(err, arc)=>{
+    var pdf = arc.pdf;
+    var aux = new Array();
+    console.log(pdf);
+      if(pdf.length == 1 && pdf[0] ==""){
+        files.pdf.push("/senddoc/"+pdfDato._id);
+      }
+      else{
+      aux.push("/senddoc/"+pdfDato._id);
+      pdf= pdf.concat(aux);
+      files.pdf = pdf;
+    }
+    await Docente.findOneAndUpdate({_id : id.dc},files,(err, params) =>{
+          if (err) {
+                    res.status(500).json({
+                      "msn" : "error en la actualizacion del pdf"
+                    });
+                    return;
+                  }
+
+                  return;
+            });
+        })
+    }
+  })
+});
+
+
 
 
 router.post('/env/:univ', async (req, res)=>{
@@ -234,7 +307,7 @@ const id = req.params;
       pdf : new Array()
     };
     await Student.find({_id : id.univ}).exec( async(err, arc)=>{
-    var pdf = arc[0].pdf;
+    var pdf = arc;
     var aux = new Array();
     console.log(pdf);
       if(pdf.length == 1 && pdf[0] ==""){
@@ -252,16 +325,15 @@ const id = req.params;
                     });
                     return;
                   }
-                  res.status(200).json(
-                    req.file
 
-                  );
                   return;
             });
         })
     }
   })
 });
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
 
 router.get('/archivo/:dc', (res, req) =>{
   const id= req.params;
@@ -569,19 +641,19 @@ router.post('/addResEstu', async (req, res) => {
 });
 
 // este servicio sirve para cambiar de pestaña recuperando el ID
-router.get('/form_paraEditar/:id', async (req, res) => {
+router.get('/form_paraEditarResDOC/:id', async (req, res) => {
   const { id } = req.params;
-  const mostrar = await Estudiantes.findById(id);
-  res.render('updateEst', {
-    mostrar //esto es para mostrar datos
+  const mostrar = await Docente.findById(id);
+  res.render('editarRESdoc', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
   });
 });
 //>>>>>>>>>>>>>>>
 //este servicio sirve para actualizar datos de un formulario
-router.post('/editEst/:id', async (req, res) => {
+router.post('/editRESdoc/:id', async (req, res) => {
   const { id } = req.params;
-  await Estudiantes.update({_id: id}, req.body);
-  res.redirect('/');
+  await Docente.update({_id: id}, req.body);
+  res.redirect('/MostrarRESdoc');
 });
 
 //>>>>>>>>>>>>>>>>
@@ -669,4 +741,14 @@ router.get("/CarrerasGET", (req, res, next) =>{
       res.status(200).json(docs);
   })
 });
+
+
+router.get("/allGETres", async(req, res) => {
+  const RESdoc = await Docente.find();
+  res.render('mostrarResolucion',{
+    RESdoc
+  });
+});
+
+
 module.exports = router;
