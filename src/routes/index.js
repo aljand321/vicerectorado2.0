@@ -26,6 +26,8 @@ const Teacher = require('../models/CartaDocente');
 const Pdf = require('../models/pdf');
 
 
+
+
 // const Data = require('../views/insertarResolucionDoc.ejs')
 
 const storage = multer.diskStorage({
@@ -45,6 +47,12 @@ const upload = multer({storage : storage}).single('doc');
 router.get('/verpdf/id:', async(req, res) =>{
 res.render('verPdf', { title: 'Aqui' });
 });
+
+router.get('/VERRpdf', async (req, res) => {
+
+  res.render('enviarPDF');
+});
+
 
 router.get('/', async (req, res) => {
   const user = await Login.find();
@@ -243,7 +251,7 @@ const id = req.params;
     else {
       //res.send('img');
       console.log(req.file);
-      var ruta = req.file.path.substr(6, req.file.path.length);
+      var ruta =  await req.file.path.substr(6, req.file.path.length);
       var archivo = {
       id_ref : id.dc,
       name : req.file.originalname,
@@ -264,26 +272,28 @@ const id = req.params;
     var con = new Array();
     console.log(pdf);
       if(pdf.length == 1 && pdf[0] ==""){
-        files.pdf.push("/senddoc/"+pdfDato._id);
+        await files.pdf.push("/senddoc/"+pdfDato._id);
         files.rt.push(archivo.relativepath);
       }
       else{
-      aux.push("/senddoc/"+pdfDato._id);
+      await aux.push("/senddoc/"+pdfDato._id);
       con.push(archivo.relativepath);
       pdf= aux;
       rt= con;
       files.pdf = pdf;
       files.rt= rt;
     }
-    await Docente.findOneAndUpdate({_id : id.dc},files,(err, params) =>{
+    await Docente.findOneAndReplace({_id : id.dc},files,(err, params) =>{
           if (err) {
                     res.status(500).json({
                       "msn" : "error en la actualizacion del pdf"
                     });
                     return;
                   }
-
-                  return;
+                  else{
+                    res.send('hola');
+                    // res.redirect('/MostrarRESdoc');
+                  }
             });
         })
     }
@@ -345,7 +355,7 @@ const id = req.params;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
 
-router.get('/archivo/:id', (res, req) =>{
+router.get('/senddoc/:id', (res, req) =>{
   var idr= req.params;
   console.log(idr);
   Pdf.findOne({id_ref: id.dc}).exec((err, pdfs) =>{
@@ -522,7 +532,7 @@ router.post('/EstDic/:id', async(req, res) =>{
   Agrupare.findOne({_id : ida.id}).exec( (err, docs) =>{
 
   })
-})
+});
 
 router.post('/cartEst/:id', async(req, res) =>{
   const  idg = req.params;
@@ -819,7 +829,7 @@ router.post('/ADDagEST', async (req, res)=>{
             idGlobalEstudiante = agrupard._id;
             // idGlobalDocente = ida;
             console.log(idGlobalEstudiante + " otro aqui");
-            res.redirect('MostrarRESest')
+            res.redirect('/MostrarRESest');
             // res.status(200).json({
             //   "ida": agrupard._id,
             //   "msn":"creado"
