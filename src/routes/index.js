@@ -37,12 +37,14 @@ const storage = multer.diskStorage({
     console.log(file);
 
     //cb(null, file.originalname + "-" +  Date.now() );
-    cb(null, file.fieldname + '-' +  Date.now() )
+    cb(null, file.fieldname + '-' +  Date.now()+ '.pdf' )
   }
 });
 const upload = multer({storage : storage}).single('doc');
 
-
+router.get('/verpdf/id:', async(req, res) =>{
+res.render('verPdf', { title: 'Aqui' });
+});
 
 router.get('/', async (req, res) => {
   const user = await Login.find();
@@ -248,23 +250,30 @@ const id = req.params;
       physicalpath : req.file.path,
       relativepath: "http://localhost:3000" + ruta
     };
+    console.log(ruta);
     var pdfDato = new Pdf(archivo);
     await pdfDato.save();
 
       var files ={
-      pdf : new Array()
+      pdf : new Array(),
+      rt : new Array()
     };
     await Docente.find({_id : id.dc}).exec( async(err, arc)=>{
     var pdf = arc[0].pdf;
     var aux = new Array();
+    var con = new Array();
     console.log(pdf);
       if(pdf.length == 1 && pdf[0] ==""){
         files.pdf.push("/senddoc/"+pdfDato._id);
+        files.rt.push(archivo.relativepath);
       }
       else{
       aux.push("/senddoc/"+pdfDato._id);
-      pdf= pdf.concat(aux);
+      con.push(archivo.relativepath);
+      pdf= aux;
+      rt= con;
       files.pdf = pdf;
+      files.rt= rt;
     }
     await Docente.findOneAndUpdate({_id : id.dc},files,(err, params) =>{
           if (err) {
@@ -308,7 +317,7 @@ const id = req.params;
       pdf : new Array()
     };
     await Student.find({_id : id.univ}).exec( async(err, arc)=>{
-    var pdf = arc;
+    var pdf = arc.pdf;
     var aux = new Array();
     console.log(pdf);
       if(pdf.length == 1 && pdf[0] ==""){
@@ -336,9 +345,10 @@ const id = req.params;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
 
-router.get('/archivo/:dc', (res, req) =>{
-  const id= req.params;
-  Pdf.findOne({_id : id.dc}).exec((err, pdfs) =>{
+router.get('/archivo/:id', (res, req) =>{
+  var idr= req.params;
+  console.log(idr);
+  Pdf.findOne({id_ref: id.dc}).exec((err, pdfs) =>{
     if(err){
       res.status(500).json({
         message : 'error'
@@ -346,7 +356,9 @@ router.get('/archivo/:dc', (res, req) =>{
     }
     else{
       if(pdfs != ""){
-        var file = fs.readFileSync("./"+pdfs.physicalpath);
+
+        var file = fs.readFileSync('./verpdf'+pdfs.physicalpath);
+        //var img = fs.readFileSync("./public/avatars/img.jpg");
         res.contentType('application/pdf');
         res.status(200).send(file);
       }
@@ -695,7 +707,7 @@ router.post("/sessions",function(req,res){
 
   Login.find({email:req.body.email, password:req.body.password, },function(err, docs){
     console.log(docs);
-    res.render('mostrarResolucion');
+    res.redirect('/allGETres');
   });
 
 });
