@@ -346,9 +346,9 @@ const id = req.params;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
 
 router.get('/archivo/:id', (res, req) =>{
-  var idr= req.params;
+  const idr = req.params;
   console.log(idr);
-  Pdf.findOne({id_ref: id.dc}).exec((err, pdfs) =>{
+  Pdf.findOne({_id: (idr.id)}).exec((err, pdfs) =>{
     if(err){
       res.status(500).json({
         message : 'error'
