@@ -950,4 +950,248 @@ router.get('/form_paraEditarResEST/:id', async (req, res) => {
 //>>>>>>>>>>>>>>>
 
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+var pdfT;
+var idGlobalTeach;
+
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/formCDoc/:id', async (req, res) => {
+  const idT = req.params;
+  idGlobalTeach = idT.id;
+  console.log(idGlobalTeach);
+  res.redirect('/MostrarCARTAdoc');
+});
+//servicio para añdir a cartas docente
+router.post('/addCartasDoc/:id', async (req, res) =>{
+  const ida = req.params;
+  const dc = {
+    nombre : req.body.nombre,
+    apellido : req.body.apellido,
+    pdf : "",
+    obs : req.body.obs
+  };
+  const teacher = new Teacher(dc);
+  Docente.find({_id : ida.id}).exec( async (err, docs) =>{
+    if(err){
+      res.send(err);
+    }
+    else {
+      if(docs != ""){
+         teacher.id_ResDoc = ida.id;
+         await teacher.save();
+        console.log(docs);
+        //esto va a mostrar solo la resolcion insertada
+        Teacher.findOne({id_ResDoc : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              pdfT = teacher._id;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+              console.log("Este es le id para el pdf:>) "+pdfT+" (<: ");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+        Teacher.find({id_ResDoc : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              idGlobalTeach = ida.id;
+              res.redirect("/MostrarCARTAdoc");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+      }
+      else {
+        res.status(200).json({
+          "msn" : "no encontro"
+        })
+      }
+    }
+  })
+});
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>/
+//>>>>>>>>>>>>>>>>>>>
+// servicio para mostrar cartas docentes
+router.get('/MostrarCARTAdoc', async (req, res) => {
+  Teacher.find({id_ResDoc : (idGlobalTeach)}).exec( async (erro, files) =>{
+    if(erro){
+      res.send(erro);
+    }
+    else{
+      if(files != ""){
+        res.render('cartasDocentes',{
+            idGlobalTeach,
+            files,
+            pdfT
+        });
+      }
+      else {
+        //console.log(idGlobalDocente)
+        res.render('cartasDocentes',{
+            idGlobalTeach,
+            files,
+            pdfT
+
+        });
+      }
+    }
+  })
+});
+
+// servico para eliminar carta docentes
+router.get('/deleteCartaDOC/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Teacher.deleteOne({_id: id });
+  res.redirect('/MostrarCARTAdoc');
+});
+
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/formEditCartaDOC/:id', async (req, res) => {
+  const { id } = req.params;
+  const mostrar = await Teacher.findById(id);
+  res.render('editarCartaDOC', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
+  });
+});
+
+//este servicio sirve para actualizar datos de un carta docente
+router.post('/editCartDOC/:id', async (req, res) => {
+  const { id } = req.params;
+  await Teacher.update({_id: id}, req.body);
+  res.redirect('/MostrarCARTAdoc');
+});
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------------
+var idGlobalEST;
+var pdfEST;
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/formCEst/:id', async (req, res) => {
+  const idEST = req.params;
+  idGlobalEST = idEST.id;
+  console.log(idGlobalEST);
+  res.redirect('/MostrarCARTAest');
+});
+
+//servicio para añdir a form carta Estudiante
+router.post('/addCartasEST/:id', async (req, res) =>{
+  const ida = req.params;
+  const dc = {
+    nombre : req.body.nombre,
+    apellido : req.body.apellido,
+    pdf : "",
+    obs : req.body.obs
+  };
+  const student = new Student(dc);
+  Estudiantes.find({_id : ida.id}).exec( async (err, docs) =>{
+    if(err){
+      res.send(err);
+    }
+    else {
+      if(docs != ""){
+         student.id_ResEst = ida.id;
+         await student.save();
+        console.log(docs);
+        //esto va a mostrar solo la resolcion insertada
+        Student.findOne({id_ResEst : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              pdfT = student._id;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+              console.log("Este es le id para el pdf:>) "+pdfT+" (<: ");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+        Student.find({id_ResEst : (ida.id)}).exec( async (erro, files) =>{
+          if(erro){
+            res.send(erro);
+          }
+          else{
+            if(files != ""){
+              idGlobalEST = ida.id;
+              res.redirect("/MostrarCARTAest");
+            }
+            else {
+              res.send('no existen los archivos0');
+            }
+          }
+        })
+      }
+      else {
+        res.status(200).json({
+          "msn" : "no encontro"
+        })
+      }
+    }
+  })
+});
+
+// servicio para mostrar cartas Estudiante
+router.get('/MostrarCARTAest', async (req, res) => {
+  Student.find({id_ResEst : (idGlobalEST)}).exec( async (erro, files) =>{
+    if(erro){
+      res.send(erro);
+    }
+    else{
+      if(files != ""){
+        res.render('cartaEStudiante',{
+            idGlobalEST,
+            files,
+            pdfEST
+        });
+      }
+      else {
+        //console.log(idGlobalDocente)
+        res.render('cartaEStudiante',{
+            idGlobalEST,
+            files,
+            pdfEST
+
+        });
+      }
+    }
+  })
+});
+
+// servico para eliminar carta estudiantes
+router.get('/deleteCartaEST/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Student.deleteOne({_id: id });
+  res.redirect('/MostrarCARTAest');
+});
+
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/formEditCartaEST/:id', async (req, res) => {
+  const { id } = req.params;
+  const mostrar = await Student.findById(id);
+  res.render('editarCartaEST', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
+  });
+});
+
+//este servicio sirve para actualizar datos de un carta estudiante
+router.post('/editCartESTudentd/:id', async (req, res) => {
+  const { id } = req.params;
+  await Student.update({_id: id}, req.body);
+  res.redirect('/MostrarCARTAest');
+});
+
 module.exports = router;
