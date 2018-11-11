@@ -53,11 +53,11 @@
 
                      </div>
 
-                     <div class="form-group">
+                     <!-- <div class="form-group">
 
-                       <!-- <input type="file" action="/env/<%= idPDF %>" method="post" name="doc" value="" class="form-control">             -->
+                       <input type="file" action="/env" method="post" name="doc" value="" class="form-control">
 
-                     </div>
+                     </div> -->
 
                      <div class="form-group">
                        <textarea name="obs" rows="4" cols="80" class="form-control" placeholder="Observaciones"></textarea>
@@ -93,7 +93,13 @@
                       <tr>
                        <td> <%=files[i].noresolucion %> </td>
                        <td> <%=files[i].nodictamen %> </td>
-                       <td>  </td>
+                       <td>
+                         <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
+                           <input type="file" name="doc">
+                           <input type="submit" name="" value="insert">
+
+                         </form>
+                        </td>
                        <td> <%=files[i].obs %> </td>
                        <td>
                          <a href="/deleteResDOC/<%=files[i]._id %>" class="btn btn-danger">Del</a>

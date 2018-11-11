@@ -14,6 +14,7 @@ mongoose.connect('mongodb://localhost/vicerectorado')
 // importar rutas
 const indexRoutes = require('./routes/index');
 
+
 //configurar
 app.set('port', process.env.PORT || 3000);
 
@@ -28,6 +29,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({extend: true}));
 //rutas
 app.use('/', indexRoutes);
+
 
 
 // iniciar servicio
