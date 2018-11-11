@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Insertar Datos Docente</title>
+  <title>Insertar cartas Estudiante</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
   integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
@@ -22,7 +22,7 @@
     <a class="nav-link" href="/allGETres">Inicio <span class="sr-only">(current)</span></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="/gDoc" >Docentes</a>
+    <a class="nav-link" href="/MostrarRESest">Resolucion Estudiante</a>
   </li>
 
   </ul>
@@ -42,22 +42,21 @@
                  <div class="card-body">
 
 
-                   <form class="" action="/addResDoc/<%= idGlobalDocente %>" method="POST">
+                   <form class="" action="/addCartasEST/<%= idGlobalEST%>" method="POST">
                      <div class="form-group">
-                       <input type="text" name="noresolucion" placeholder="N° Resolucion" class="form-control">
+                       <input type="text" name="nombre" placeholder="Nombre Docente" class="form-control">
 
                      </div>
 
                      <div class="form-group">
-                       <input type="text" name="nodictamen" placeholder="N° Dictamen" class="form-control">
+                       <input type="text" name="apellido" placeholder="Apellido Docente" class="form-control">
 
                      </div>
 
-                     <!-- <div class="form-group">
+                     <div class="form-group">
+                       <input type="text" name="pdf" placeholder="Carta.pdf" class="form-control">
 
-                       <input type="file" action="/env" method="post" name="doc" value="" class="form-control">
-
-                     </div> -->
+                     </div>
 
                      <div class="form-group">
                        <textarea name="obs" rows="4" cols="80" class="form-control" placeholder="Observaciones"></textarea>
@@ -78,8 +77,8 @@
                <table class="table table-bordered table-hover">
                  <thead>
                    <tr>
-                     <th>Resolucion</th>
-                     <th>Dictamen</th>
+                     <th>Nombre</th>
+                     <th>Apeliido</th>
                      <th>DOC</th>
                      <th>Observaciones</th>
                      <th>Operacion</th>
@@ -88,30 +87,19 @@
                  </thead>
 
                  <tbody>
-
                    <% for(var i=0; i < files.length; i++) { %>
-                      <tr>
-                       <td> <%=files[i].noresolucion %> </td>
-                       <td> <%=files[i].nodictamen %> </td>
-                       <td>
-                         <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
-                           <input type="file" name="doc">
-                           <input type="submit" name="" value="insert">
-
-                         </form>
-                        </td>
+                     <tr>
+                       <td> <%=files[i].nombre %> </td>
+                       <td> <%=files[i].apellido %> </td>
+                       <td>  </td>
                        <td> <%=files[i].obs %> </td>
                        <td>
-                         <a href="/deleteResDOC/<%=files[i]._id %>" class="btn btn-danger">Del</a>
-                         <a href="/form_paraEditarResDOC/<%=files[i]._id %>" class="btn btn-info">Edit</a>
-                         <a href="/formCDoc/<%=files[i]._id %>" class="btn btn-info">Cartas</a>
+                         <a href="/deleteCartaEST/<%=files[i]._id %>" class="btn btn-danger">Del</a>
+                         <a href="/formEditCartaEST/<%=files[i]._id %>" class="btn btn-info">Edit</a>
                        </td>
-
-                        </tr>
+                     </tr>
 
                      <% } %>
-
-
                  </tbody>
 
                </table>
