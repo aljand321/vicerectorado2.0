@@ -3,7 +3,9 @@ const router = express.Router();
 const multer = require('multer');
 //const upload = multer({dest: 'src/documentos/'})
 const fs = require('fs');
-// <<><<<<<<<<<<><<<<>><<<>><<>>><<<<<<<>>><<<<<<>><<>>><<<<>><
+const path = require('path');
+const ejs = require('ejs');
+//aljand
 const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
 const Data = require('../models/data');
@@ -23,19 +25,37 @@ const Pdf = require('../models/pdf');
 const Stilo = require('../public/css/estilo.css')
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb){
-    cb(null ,'src/documentos/')//aqui se define el lugar donde se almacena la imagen
-  },
+  destination: 'public/documents',
   filename: function (req, file, cb) {
-    console.log("-------------------------");
-    console.log(file);
+  //  console.log("-------------------------");
+  //  console.log(file);
 
     //cb(null, file.originalname + "-" +  Date.now() );
-    cb(null, file.fieldname + '-' +  Date.now()+ '.pdf' )
+    cb(null, file.fielname + '-' +  Date.now()+ '.pdf' );
   }
 });
-const upload = multer({storage : storage}).single('doc');
-
+const upload = multer({
+  storage : storage,
+  limits:{fileSize: 1000000},
+  fileFilter: function(req, file, cb){
+    checkFileType(file,cb);
+  }
+}).single('doc');
+//revisar el tipo de archivos
+function checkFileType(file, cb){
+  //solo la ext
+    const filetypes= /pdf|txt/;
+  //revisar la exte
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    //revisar mime
+    const mimetype = filetypes.test(file.mimetype);
+    if(mimetype && extname){
+      return cb(null, true);
+    }
+    else{
+      cb('Error: pdf only');
+    }
+  }
 router.get('/verpdf/id:', async(req, res) =>{
 res.render('verPdf', { title: 'Aqui' });
 });
@@ -322,61 +342,51 @@ router.get('/MostrarRESdoc', async (req, res) => {
 
 // servicio para añadir pdf a resolcion docente
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-router.post('/senddoc/:dc', async (req, res)=>{
+
+router.post('/senddoc/:dc',  (req, res)=>{
 const id = req.params;
- upload ( req,  res, async  (err) =>{
+ upload ( req,  res, (err) =>{
     if(err){
-      res.send('err');
-      return ;
+      res.render({
+        msg : err
+      });
     }
     else {
       //res.send('img');
-      console.log(req.file);
-      var ruta =  await req.file.path.substr(6, req.file.path.length);
-      var archivo = {
-      id_ref : id.dc,
-      name : req.file.originalname,
-      physicalpath : req.file.path,
-      relativepath: "http://localhost:3000" + ruta
-    };
-    console.log(ruta);
-    var pdfDato = new Pdf(archivo);
-    await pdfDato.save();
-
-      var files ={
-      pdf : new Array(),
-      rt : new Array()
-    };
-    await Docente.find({_id : id.dc}).exec( async(err, arc)=>{
-    var pdf = arc[0].pdf;
-    var aux = new Array();
-    var con = new Array();
-    console.log(pdf);
-      if(pdf.length == 1 && pdf[0] ==""){
-        await files.pdf.push("/senddoc/"+pdfDato._id);
-        files.rt.push(archivo.relativepath);
+      if(req.file == undefined){
+        res.render('enviarPDF');
       }
       else{
-      await aux.push("/senddoc/"+pdfDato._id);
-      con.push(archivo.relativepath);
-      pdf= aux;
-      rt= con;
-      files.pdf = pdf;
-      files.rt= rt;
-    }
-    await Docente.findOneAndReplace({_id : id.dc},files,(err, params) =>{
-          if (err) {
-                    res.status(500).json({
-                      "msn" : "error en la actualizacion del pdf"
-                    });
-                    return;
-                  }
-                  else{
-                    res.send('hola');
-                    // res.redirect('/MostrarRESdoc');
-                  }
+        res.render('enviarPDF');
+        const archivo ={
+          id_ref : id.dc,
+          name : req.file.originalname,
+          physicalpath : req.file.path,
+          relativepath : ""
+        };
+        pdfDato = new Pdf(archivo);
+        pdfDato.save().then((infofile) => {
+          var file ={pdfs :new Array()};
+
+        Docente.findOne({ _id : (id.dc)}).exec ( ( err, agr)=>{
+            const pdf = agr.pdf;
+            const aux = new Array();
+            if(pdf.length == 1 && pdf[0] == ""){
+              file.pdfs.push("/senddoc/"+infofile._id);
+
+            }
+            else{
+              file.pdfs.push("/senddoc/"+infofile._id);
+            }
+            Docente.findOneAndUpdate({_id: (id.dc)},file, (err, params)=>{
+              if (err) {
+                console.log(err);
+              }
+              console.log(req.file);
             });
         })
+        });
+      }
     }
   })
 });
@@ -436,10 +446,10 @@ const id = req.params;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
 
-router.get('/senddoc/:id', (res, req) =>{
-  var idr= req.params;
+router.get('/archivo/:id', (res, req) =>{
+  const idr = req.params;
   console.log(idr);
-  Pdf.findOne({id_ref: id.dc}).exec((err, pdfs) =>{
+  Pdf.findOne({_id: (idr.id)}).exec((err, pdfs) =>{
     if(err){
       res.status(500).json({
         message : 'error'
