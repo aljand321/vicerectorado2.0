@@ -94,11 +94,13 @@
                        <td> <%=files[i].noresolucion %> </td>
                        <td> <%=files[i].nodictamen %> </td>
                        <td>
+                         <%typeof msg != 'undefined' ? msg :'' %>
                          <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
                            <input type="file" name="doc">
                            <input type="submit" name="" value="insert">
 
                          </form>
+                         <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img"
                         </td>
                        <td> <%=files[i].obs %> </td>
                        <td>

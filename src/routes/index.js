@@ -354,10 +354,10 @@ const id = req.params;
     else {
       //res.send('img');
       if(req.file == undefined){
-        res.render('enviarPDF');
+        res.redirect('/MostrarRESdoc');
       }
       else{
-        res.render('enviarPDF');
+        res.redirect('/MostrarRESdoc');
         const archivo ={
           id_ref : id.dc,
           name : req.file.originalname,
