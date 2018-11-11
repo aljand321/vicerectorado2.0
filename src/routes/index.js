@@ -3,32 +3,24 @@ const router = express.Router();
 const multer = require('multer');
 //const upload = multer({dest: 'src/documentos/'})
 const fs = require('fs');
-//const Student = require('../models/CartaEstudiante');
-//const Teacher = require('../models/CartaDocente');
-
-//aljand
+// <<><<<<<<<<<<><<<<>><<<>><<>>><<<<<<<>>><<<<<<>><<>>><<<<>><
 const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
 const Data = require('../models/data');
 //>>>>>>>>>>>>>>>>>>>
-
-//const Student = require('../models/student');
 const Career = require('../models/career');
 const Facultad = require('../models/faculty');
 const bodyParser = require('body-parser');
 const Agrupare = require('../models/agruparestudiante');
 const Agrupard = require('../models/agrupardocente');
 const Docente = require('../models/ResolucionDocente');
-// const Estudiante = require('../models/ResolucionEstudiante');
+
 const Student = require('../models/CartaEstudiante');
 const Teacher = require('../models/CartaDocente');
 
 const Pdf = require('../models/pdf');
 
-
-
-
-// const Data = require('../views/insertarResolucionDoc.ejs')
+const Stilo = require('../public/css/estilo.css')
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb){
@@ -57,7 +49,7 @@ router.get('/VERRpdf', async (req, res) => {
 router.get('/', async (req, res) => {
   const user = await Login.find();
   res.render('index',{
-    user
+    user,
   });
 });
 
@@ -69,19 +61,86 @@ res.redirect('/');
 //res.send('received');
 });
 
-//servicio para añadir a facultad
+//servicios crud para facultad
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<
+// este servicio sirve para a insertar a faultad
 router.post('/addf', async (req, res) =>{
 const facultad = new Facultad(req.body);
 await facultad.save();
 console.log(facultad);
-//res.redirect('/');
-res.send('received');
+res.redirect('/facultad');
+});
+//>>>>>>>>><<>><<<>>><<<<<<<>><<>>>><<<<<>>>><<<<>>>><<<<><<<<<<<<><<<>><
+
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/editFacultad/:id', async (req, res) => {
+  const { id } = req.params;
+  const mostrar = await Facultad.findById(id);
+  res.render('WformFACUedit', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
+  });
 });
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><
+//este servicio sirve para actualizar datos de un carta estudiante
+router.post('/editFacu/:id', async (req, res) => {
+  const { id } = req.params;
+  await Facultad.update({_id: id}, req.body);
+  res.redirect('/facultad');
+});
+//<>>>>>><>><>>><<>>><>><<<<><<<>><><<<>><<<><<<<><<<<<<>><<<>><><<<<<
+// servico para eliminar facultad
+router.get('/deletFacu/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Facultad.deleteOne({_id: id });
+  res.redirect('/facultad');
+});
+//<<>><<<><<><<<>><<<><<>>><<<<<<><<<<>>><<<><<<>>>><<<<>><<<<><<<>>><<<
+// servico para mostrar vista Wfacultad
+router.get('/facultad', async (req, res) => {
+  const facuT = await Facultad.find();
+  res.render('Wfacultad',{
+    facuT
+  });
+});
+//>>>>>>>>>>>><<<>>><<<>>><<><<<<>><<>>><>>><<<><<<<<<>>><<<<>>>><<
 
-//servicio para añadir a carrera con id
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<>>>>><<<<><<<<<><>>><<>>><>><<<<><
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+var idFACULTAD
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/insertcarrera/:id', async (req, res) => {
+  const idfacu = req.params;
+  idFACULTAD = idfacu.id;
+  console.log(idFACULTAD);
+  res.redirect('/mostrarCarrera');
+});
+//>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>><<<<<>>>><<<<>>><<<>><<>><<<<<<<<<<
+
+// servicio para mostrar carreras
+router.get('/mostrarCarrera', async (req, res) => {
+  Career.find({id_f : (idFACULTAD)}).exec( async (erro, files) =>{
+    if(erro){
+      res.send(erro);
+    }
+    else{
+      if(files != ""){
+        res.render('WinsertarCarrera',{
+            idFACULTAD,
+            files
+        });
+      }
+      else {
+        //console.log(idGlobalDocente)
+        res.render('WinsertarCarrera',{
+            idFACULTAD,
+            files
+        });
+      }
+    }
+  })
+});
+
+//servicio para añadir a carrera con id de la facultad
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post(/race\/[a-z0-9]{1,}$/, async (req, res) =>{
   var url = req.url;
@@ -112,10 +171,32 @@ Facultad.findOne({_id : id}).exec((error, docs) => {
 })
 await career.save();
 console.log(career);
-//res.redirect('/');
-res.send('received');
+res.redirect('/mostrarCarrera');
+
 });
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// este servicio sirve para cambiar de pestaña recuperando el ID
+router.get('/editCarrera/:id', async (req, res) => {
+  const { id } = req.params;
+  const mostrar = await Career.findById(id);
+  res.render('WeditCarrera', {
+    mostrar //esto es para enviar datos a la otra vista en este caso se envia el id
+  });
+});
+
+//este servicio sirve para actualizar datos de un carta estudiante
+router.post('/editC/:id', async (req, res) => {
+  const { id } = req.params;
+  await Career.update({_id: id}, req.body);
+  res.redirect('/mostrarCarrera');
+});
+//<>>>>>><>><>>><<>>><>><<<<><<<>><><<<>><<<><<<<><<<<<<>><<<>><><<<<<
+// servico para eliminar carrera
+router.get('/deleteCarrera/:id', async (req, res, next) => {
+  let { id } = req.params;
+  await Career.deleteOne({_id: id });
+  res.redirect('/mostrarCarrera');
+});
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -648,9 +729,10 @@ router.get('/regUSER', async (req, res) => {
 
 //esto muestra la venta grupo docnetes
 router.get('/gDoc', async (req, res) => {
-  const GetDocente = await Agrupard.find();
+  const carrera = await Career.find();
+  // console.log(carrera);
   res.render('grupoDocentes',{
-    GetDocente
+    carrera
   });
 });
 
@@ -777,7 +859,10 @@ router.get("/allGETres", async(req, res) => {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // este servico es para mostrar grupo estudiantes
 router.get('/gEST', async (req, res) => {
-  res.render('grupoEstudiante');
+  const carrera = await Career.find();
+  res.render('grupoEstudiante',{
+    carrera
+  });
 });
 //>>>>>>>>>>>>>>>>>>>>
 
@@ -1193,5 +1278,5 @@ router.post('/editCartESTudentd/:id', async (req, res) => {
   await Student.update({_id: id}, req.body);
   res.redirect('/MostrarCARTAest');
 });
-
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 module.exports = router;

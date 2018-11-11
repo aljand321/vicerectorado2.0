@@ -18,7 +18,9 @@ const indexRoutes = require('./routes/index');
 app.set('port', process.env.PORT || 3000);
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs', 'css', 'html');
+
+app.use(express.static("public"));
 
 //app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));

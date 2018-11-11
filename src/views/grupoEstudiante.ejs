@@ -47,10 +47,9 @@
                     <div class="form-group">
                       <!-- <input type="text" name="numResolucion" class="form-control" value="Carrera" > -->
                       <select class="form-control" name="carrera">
-                        <option value="Sistemas">Ingenieria de Sistemas</option>
-                        <option value="informatica">Informatica</option>
-                        <option value="civil">Ingenieria Civil</option>
-                        <option value="Matematica">Matematica</option>
+                        <% for(var i=0; i < carrera.length; i++) { %>
+								      	<option value="<%=carrera[i].nombre %>"><%=carrera[i].nombre %></option>
+                          <% } %>
                       </select>
                     </div>
 
