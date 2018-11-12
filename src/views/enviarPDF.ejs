@@ -8,12 +8,14 @@
   </head>
   <body>
     <%typeof msg != 'undefined' ? msg :'' %>
-    <form class="" action="senddoc/5be87e77b4c9241488bfa399" method="post" enctype="multipart/form-data">
+    <form class="" action="senddoc/5be904d54d8e324ea33a1410" method="post" enctype="multipart/form-data">
 
       <input type="file" name="doc" id="doc">
       <input type="submit" name="" value="enviar">
 
     </form>
     <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img"
+    <br/><br/>
+    <a href="/files">Browse existing files</a>
   </body>
   </html>
