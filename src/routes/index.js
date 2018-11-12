@@ -22,7 +22,7 @@ const Teacher = require('../models/CartaDocente');
 
 const Pdf = require('../models/pdf');
 
-const Stilo = require('../public/css/estilo.css')
+
 
 const storage = multer.diskStorage({
   destination: 'public/documents',
