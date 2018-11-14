@@ -5,6 +5,8 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
+var util = require('util')
+
 //aljand
 const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
