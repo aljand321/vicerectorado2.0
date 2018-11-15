@@ -9,7 +9,7 @@ function filterDotFiles (files) {
 }
 
 router.get('/', function (req, res, next) {
-  const testFolder = path.join(__dirname, '../public/documents')
+  const testFolder = path.join(__dirname, '../public/documents/doc-1541766340046.pdf')
   var readdir = util.promisify(fs.readdir)
 
   return readdir(testFolder)

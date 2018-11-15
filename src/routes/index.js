@@ -383,6 +383,8 @@ const id = req.params;
                 console.log(err);
               }
               console.log(req.file);
+              console.log("este archivo es"+ __filename);
+              console.log("esta ubicado en"+ __dirname);
             });
         })
         });
@@ -735,6 +737,7 @@ router.get('/filtroRes/:id', async(req, res) =>{
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.get('/regUSER', async (req, res) => {
   res.render('registrarUsuarios');
+
 });
 
 //esto muestra la venta grupo docnetes
