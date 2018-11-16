@@ -34,8 +34,9 @@
   </form>
   </div>
   </nav>
-  <br><br>
   <div class="container">
+      <h5>         Carrera: "<%= grupo.carrera %>",   Gestion: "<%= grupo.gestion %>",   Periodo academoco: "<%= grupo.periodo %>""   </h5>
+
            <div class="row">
              <div class="col-md-3">
                <div class="card">
@@ -78,9 +79,9 @@
                <table class="table table-bordered table-hover">
                  <thead>
                    <tr>
-                     <th>Resolucion</th>
-                     <th>Dictamen</th>
-                     <th>DOC</th>
+                     <th style="width:100px">Resolucion</th>
+                     <th style="width:100px">Dictamen</th>
+                     <th style="width:200px">DOC</th>
                      <th>Observaciones</th>
                      <th>Operacion</th>
 
@@ -94,13 +95,23 @@
                        <td> <%=files[i].noresolucion %> </td>
                        <td> <%=files[i].nodictamen %> </td>
                        <td>
-                         <%typeof msg != 'undefined' ? msg :'' %>
-                         <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
-                           <input type="file" name="doc">
-                           <input type="submit" name="" value="insert">
+                         <div class="form-group">
+                           <%typeof msg != 'undefined' ? msg :'' %>
+                           <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
+                             <!-- <input type="file" name="doc" > -->
+                             <!-- <input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp"> -->
+                             <!-- <input type="submit" name="" value="insert"> -->
+                             <div class="custom-file" id="customFile" lang="es">
+                                      <input name="doc" type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
+                                      <label class="custom-file-label" for="exampleInputFile">
+                                        Select
+                                      </label>
+                                      <button type="submit" class="btn btn-secondary btn-sm">Insertar</button>
+                              </div>
 
-                         </form>
-                         <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img"
+                           </form>
+                           <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img"
+                         </div>
                         </td>
                        <td> <%=files[i].obs %> </td>
                        <td>

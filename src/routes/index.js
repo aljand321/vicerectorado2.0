@@ -5,6 +5,8 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
+var util = require('util')
+
 //aljand
 const Estudiantes = require('../models/estudiantes');
 const Login = require('../models/login');
@@ -320,7 +322,8 @@ router.get('/MostrarRESdoc', async (req, res) => {
         res.render('insertarResolucionDoc',{
             idGlobalDocente,
             files,
-            idPDF
+            idPDF,
+            grupo
         });
       }
       else {
@@ -328,7 +331,8 @@ router.get('/MostrarRESdoc', async (req, res) => {
         res.render('insertarResolucionDoc',{
             idGlobalDocente,
             files,
-            idPDF
+            idPDF,
+            grupo
         });
       }
     }
@@ -506,6 +510,7 @@ console.log(docs);
 });*/
 
 //servicio para añadir a agrupar docente
+var grupo;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post('/addADoc', async (req, res)=>{
   const agr = {
@@ -513,6 +518,7 @@ router.post('/addADoc', async (req, res)=>{
     gestion : req.body.gestion,
     periodo : req.body.periodo
   };
+   grupo = new Agrupard(agr);
   Agrupard.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo}, {"_id" :1}).exec( (err, docs) => {
     if(err){
       res.send('error');
@@ -520,6 +526,7 @@ router.post('/addADoc', async (req, res)=>{
     else{
       if(docs != ""){
         const resolid = docs;
+           console.log(grupo);
            idGlobalDocente = docs[0]._id;
           Docente.find({id_a : (idGlobalDocente)}).exec( async(err, files)=>{
             if(err){
@@ -881,6 +888,7 @@ router.get('/gEST', async (req, res) => {
 
 // >>>>>>>>>>>>>>
 var idGlobalEstudiante;
+var grupoEST;
 // servioco para añadir a agrupar estudiante
 router.post('/ADDagEST', async (req, res)=>{
   const agr = {
@@ -889,6 +897,7 @@ router.post('/ADDagEST', async (req, res)=>{
     periodo : req.body.periodo,
     tipoBeca : req.body.tipoBeca
   };
+  grupoEST = new Agrupare(agr);
   Agrupare.find({carrera: req.body.carrera, gestion: req.body.gestion, periodo: req.body.periodo, tipoBeca : req.body.tipoBeca}, {"_id" :1}).exec( (err, docs) => {
     if(err){
       res.send('error');
@@ -950,7 +959,8 @@ router.get('/MostrarRESest', async (req, res) => {
         res.render('insertarResolEst',{
             idGlobalEstudiante,
             files,
-            idPDFest
+            idPDFest,
+            grupoEST
         });
       }
       else {
@@ -958,8 +968,8 @@ router.get('/MostrarRESest', async (req, res) => {
         res.render('insertarResolEst',{
             idGlobalEstudiante,
             files,
-            idPDFest
-
+            idPDFest,
+            grupoEST
         });
       }
     }
