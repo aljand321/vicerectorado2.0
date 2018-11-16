@@ -29,6 +29,7 @@ var files;
 var idPDF;
 var grupo;
 var idFACULTAD;
+var idGlobalDocent;
 
 const storage = multer.diskStorage({
   destination: 'src/public/documents',
@@ -313,7 +314,13 @@ router.get('/deleteResDOC/:id', async (req, res, next) => {
 
 // servicio para mostrar resolucion docentes
 router.get('/viewsteacher', (req, res) =>{
-  res.render('insertarResolucionDoc');
+
+  res.render('insertarResolucionDoc',{
+      idGlobalDocente,
+      files,
+      idPDF,
+      grupo
+  });
 });
 router.get('/MostrarRESdoc', async (req, res) => {
   Docente.find({id_a : (idGlobalDocente)}).exec( async (erro, files) =>{
@@ -370,7 +377,7 @@ const id = req.params;
         console.log("este archivo es"+ __filename);
         console.log("esta ubicado en"+ __dirname);
 
-        res.redirect('/viewsteacher');
+        //res.redirect('/viewsteacher');
         const archivo ={
           id_ref : id.dc,
           name : req.file.filename,
@@ -403,28 +410,119 @@ const id = req.params;
                   console.log(err);
                 }
                 console.log(req.file);
-                res.redirect('/viewsteacher');
+                res.redirect('/MostrarRESdoc');
                 //res.redirect('/VERRpdf');
 
               });
             }
             else {
               //res.redirect('/VERRpdf');
-              res.redirect('viewsteacher');
+              res.redirect('/MostrarRESdoc');
 
             }
           }
 
         })
-        });
+      });
     //  }
     }
   })
 });
 
 
+router.post('/sendteacher/:dc',  (req, res)=>{
+const id = req.params.dc;
+ upload ( req,  res, (err) =>{
+    if(err){
+      res.render({
+        msg : err
+      });
+    }
+    else {
+      //res.send('img');
+      //if(req.file == undefined){
+        //res.redirect('/MostrarRESdoc');
+      //}
+      //else{
+        //console.log(req.file);
+        console.log("este archivo es"+ __filename);
+        console.log("esta ubicado en"+ __dirname);
+        var ruta = req.file.path.substr(6, req.file.path.length);
+        console.log("--->"+ruta);
+        //res.redirect('/viewsteacher');
+        const archivo ={
+          id_ref : id.dc,
+          name : req.file.filename,
+          physicalpath : req.file.path,
+          relativepath : "https://localhost:3000"+ruta
+        };
+        pdfDato = new Pdf(archivo);
+        pdfDato.save().then((infofile) => {
+          var file ={pdfs :new Array()};
 
+        Teacher.find({ _id : id}).exec ( ( err, agr)=>{
+          if(err){
+            //res.render('enviarPDF');
+            res.render('error');
+            console.log(err);
+          }
+          else {
 
+            if(agr != null){
+              const pdf = agr.pdf;
+              const aux = new Array();
+              if(pdf.length == 1 && pdf[0] == ""){
+                file.pdfs.push("/sendteacher/"+infofile._id);
+
+              }
+              else{
+                aux.push("/sendteacher/"+infofile._id);
+                pdf= pdf.concat(aux);
+                file.pdfs = pdf;
+              }
+              Teacher.findOneAndUpdate({_id: id},file, (err, params)=>{
+                if (err) {
+                  res.render('error');
+                }
+                console.log(req.file);
+                res.redirect('/MostrarCARTAdoc');
+                //res.redirect('/VERRpdf');
+
+              });
+            }
+            else {
+              //res.redirect('/VERRpdf');
+              res.redirect('/MostrarCARTAdoc');
+
+            }
+          }
+
+        })
+      });
+    //  }
+    }
+  })
+});
+
+router.get('/getteacher/', (req, res)=>{
+  var data = req.query;
+  Pdf.find({_id:data.id}).exec(function(err, docs) {
+    if(err)
+    {
+      res.render('error');
+    }
+    else {
+      if(docs != ""){
+        var name = docs.physicalpath.split("/")[2];
+        //res.redirect("http://localhost:3000/documents/"+name);
+        res.send("http://localhost:3000/documents/"+name);
+      }
+      else{
+        res.send("there isn't");
+      }
+    }
+  });
+});
 router.post('/env/:univ', async (req, res)=>{
 const id = req.params;
  upload ( req,  res, async  (err) =>{
@@ -783,7 +881,7 @@ router.get('/filtroRD/', async(req, res) =>{
 router.get('/filtroGD/', async(req, res) =>{
   const params = req.query;
   console.log(req.query);
-  
+
   //  const tipo = params.tipo;
   //db.prueba.find({ $text : { $search: '"Miguel Quijote"'} });
   Agrupard.find({carrera : params.carrera, gestion : params.year, periodo : params.periodo  }).exec( (err, docs) =>{
@@ -1151,7 +1249,7 @@ router.post('/addCartasDoc/:id', async (req, res) =>{
   const teacher = new Teacher(dc);
   Docente.find({_id : ida.id}).exec( async (err, docs) =>{
     if(err){
-      res.send(err);
+      res.render('error');
     }
     else {
       if(docs != ""){

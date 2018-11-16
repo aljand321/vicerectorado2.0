@@ -91,11 +91,31 @@
                      <tr>
                        <td> <%=files[i].nombre %> </td>
                        <td> <%=files[i].apellido %> </td>
-                       <td>  </td>
+                       <td>
+                         <div class="form-group">
+
+                           <form class="" action="/sendteacher/<%= files[i]._id %>" method="post" enctype="multipart/form-data">
+                             <!-- <input type="file" name="doc" > -->
+                             <!-- <input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp"> -->
+                             <!-- <input type="submit" name="" value="insert"> -->
+                             <div class="custom-file" id="customFile" lang="es">
+                                      <input type="file" name="doc" class="custom-file-input" id="doc" aria-describedby="fileHelp">
+                                      <label class="custom-file-label" for="exampleInputFile">
+                                        Select
+                                      </label>
+                                      <button type="submit"  value="enviar">Insertar</button>
+                              </div>
+
+                           </form>
+                           <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img"
+                         </div>
+                        </td>
                        <td> <%=files[i].obs %> </td>
                        <td>
                           <a href="/deleteCartaDOC/<%=files[i]._id %>" class="btn btn-danger">Del</a>
                           <a href="/formEditCartaDOC/<%=files[i]._id %>" class="btn btn-info">Edit</a>
+                          <a href="/getteacher/?<%=files[i]._id %>" class="btn btn-info">File</a>
+
                        </td>
                      </tr>
 

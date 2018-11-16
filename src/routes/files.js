@@ -16,9 +16,20 @@ router.get('/', function (req, res, next) {
 
   var data = req.query;
   Pdf.find({_id:data.id}).exec(function(err, docs) {
-    var name = docs.physicalpath.split("/")[2];
-    //res.redirect("http://localhost:3000/documents/"+name);
-    res.send("http://localhost:3000/documents/"+name);
+    if(err)
+    {
+      res.send("no exist file"+ err);
+    }
+    else {
+      if(docs != ""){
+        var name = docs.physicalpath.split("/")[2];
+        //res.redirect("http://localhost:3000/documents/"+name);
+        res.send("http://localhost:3000/documents/"+name);
+      }
+      else{
+        res.send("there isn't");
+      }
+    }
   });
   /*
   const testFolder = path.join('/home/alejandro/vicerrectorado2.0/public/documents/')
