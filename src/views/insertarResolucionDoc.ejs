@@ -35,7 +35,7 @@
   </div>
   </nav>
   <div class="container">
-      <h5>         Carrera: "<%= grupo.carrera %>",   Gestion: "<%= grupo.gestion %>",   Periodo academoco: "<%= grupo.periodo %>""   </h5>
+      <h5>         Carrera: "<%= grupo.carrera %>",   Gestion: "<%= grupo.gestion %>",   Periodo academico: "<%= grupo.periodo %>""   </h5>
 
            <div class="row">
              <div class="col-md-3">
@@ -96,17 +96,17 @@
                        <td> <%=files[i].nodictamen %> </td>
                        <td>
                          <div class="form-group">
-                           <%typeof msg != 'undefined' ? msg :'' %>
-                           <form class="" action="/senddoc/<%= files[i]._id %>" method="post">
+
+                           <form class="" action="/senddoc/<%= files[i]._id %>" method="post" enctype="multipart/form-data">
                              <!-- <input type="file" name="doc" > -->
                              <!-- <input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp"> -->
                              <!-- <input type="submit" name="" value="insert"> -->
                              <div class="custom-file" id="customFile" lang="es">
-                                      <input name="doc" type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
+                                      <input type="file" name="doc" class="custom-file-input" id="doc" aria-describedby="fileHelp">
                                       <label class="custom-file-label" for="exampleInputFile">
                                         Select
                                       </label>
-                                      <button type="submit" class="btn btn-secondary btn-sm">Insertar</button>
+                                      <button type="submit"  value="enviar">Insertar</button>
                               </div>
 
                            </form>

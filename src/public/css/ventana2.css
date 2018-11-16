@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Seans|Pacifico');
+
+*{
+	box-sizing: border-box;
+	font-family: 'Open Seans';
+	padding: 0;
+	margin: 0;
+}
+
+hr{
+	height: 1px;
+	border: none;
+	background: #7a7a7a;
+	max-width: 80%;
+	margin: 0 auto;
+}
+body{
+	background: #e1e1e1;
+}
+ p,
+ h1{
+	 max-width: 80%;
+	 margin: 20px auto;
+ }
+
+ h1{
+	 font-weight: normal;
+ }
+
+ .logo{
+	 font-family: 'Charcoal';
+	 font-size: 90px;
+ }
+
+ .logo_main{
+	 height: 140px;
+	 padding:  20px;
+	 background:  #1e1e1e;
+	 color: #e1e1e1;
+	 cursor: default;
+ }
+
+ .logo_small{
+	 display:inline-block;
+	 font-size: 20px;
+	 padding: 4px;
+	 margin-right: 50px;
+	 color: #e1e1e1;
+	 cursor: pointer;
+ }
+
+ .nav{
+	 float: left;
+	 width: 100%;
+	 background: #27576d;
+	 color: #e1e1e1;
+	 padding: 0 30px;
+	 transition: .3s ease all;
+	 backface-visibility: hidden;
+	 transform: translate(0, 0, 0);
+	 -webkit-transform: translate3d(0, 0, 0);
+ }
+ .nav .wrap{
+	 position: relative;
+	 left: -150px;
+	 transition: 0.4s ease all;
+ }
+
+ nav{
+	 display: inline-block;
+ }
+ nav ul{
+	 margin: 0;
+	 padding: 0;
+ }
+ nav li{
+	 margin: 0;
+	 padding: 0;
+	 display: inline-block;
+ }
+ nav a{
+	 display: block;
+	 padding: 20px;
+	 margin: 0;
+	 color: #e1e1e1;
+	 text-decoration: none;
+	 transition: 0.2s ease all;
+ }
+ /* para que cambie de color cuando se pasa el maus */
+ nav a:hover{
+	 color: #e1e1e1;
+	 background: #1e1e1e;
+ }
+
+ .main{
+	 background: #e1e1e1;
+	 padding: 80px 60px;
+ }
+ body.nav_fixed .nav{
+	 position: fixed;
+	 top: 0;
+ }
+body.nav_fixed .nav .wrap{
+	left: 0;
+}
+
+.btn-menu{
+	width: 60px;
+	height: 60px;
+	padding: 22px;
+	text-align: center;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background: #27576d;
+	border-radius: 50%;
+	color: #e1e1e1;
+	cursor: progress;
+	transition: all 500ms cubic-bezier(1, 0, 0, 1);
+	transform: translateX(100px);
+}
+
+.btn-menu:hover{
+	transform: scale(1.2);
+	background: #193846;
+}
+
+/* menu responcive */
+@media screen and (max-width: 800px){
+    .btn-menu{
+        transform: translateX(0px);
+    }
+
+    .logo_main{
+        display: none;
+    }
+/* esto es para la varra del menu lateral */
+    .nav{
+        width: 130px;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        padding: 0px;
+        transform: translateX(-100%);
+    }
+
+
+    .nav .wrap{
+        left: 0;
+    }
+
+    nav{
+        width: 100%;
+        position: absolute;
+        top: 60px;
+    }
+
+    nav li{
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    .logo_small{
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    nav a{
+        width: 100%;
+        display: block;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .nav-toggle{
+        transition: all 300ms cubic-bezier(1,0,0,1);
+        transform: translateX(0%);
+    }
+
+
+    .main{
+    background: #e1e1e1;
+    padding: 20px; 60px;
+    }
+
+}
+
+/* para el formulario */
+.formulario{
+	margin: auto;
+	margin-top: 7%;
+	/* width: 50%; */
+	/* height: wrap; */
+	max-width: 450px;
+	background-color: #27576d;
+
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+
+}
+
+.tituo_dictamen{
+	/* font-size: 40px; */
+	text-align:  center;
+	margin-bottom: 10px;
+	color: #e1e1e1;
+}
+
+.mainform label{
+		/* margin-bottom: 0px; */
+	margin: 0;
+	display: block;
+	text-align: center;
+  /* font-weight: bold; */
+   /* 	display: none; */
+	font-size: 25px;
+	color: #e1e1e1;
+}
+
+.mainform select{
+	font-size: 18px;
+	padding: 6px;
+	width: 80%;
+	margin-left: 10%;
+  margin-bottom: 8px;
+	border-radius: 8px;
+	color: #e1e1e1;
+	background: #1e1e1e;
+}
+
+.mainform input[type="submit"]{
+  border: none;
+  outline: none;
+  height: 40px;
+	width: 120px;
+	margin-left: 37%;
+	margin-top: 5px;
+	margin-bottom: 15px;
+  background: #1e1e1e;
+  color: #e1e1e1;
+  font-size: 18px;
+  border-radius: 10px;
+}
+input[type="submit"]:hover{
+	color: #e1e1e1;
+	background: #c37065;
+}
+
+
+
+
+
+
+
+/* https://www.youtube.com/watch?v=3AnJZl-CDA8   min 13*/

@@ -1,0 +1,24 @@
+.tablaDocente{
+	margin: auto;
+	margin-top: 8%;
+	max-width: 80%;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #27576d;
+    color: white;
+}

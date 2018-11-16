@@ -24,14 +24,17 @@ const Teacher = require('../models/CartaDocente');
 
 const Pdf = require('../models/pdf');
 
-
+//global validator
+var files;
+var idPDF;
+var grupo;
+var idFACULTAD;
 
 const storage = multer.diskStorage({
-  destination: 'public/documents',
+  destination: 'src/public/documents',
   filename: function (req, file, cb) {
-  //  console.log("-------------------------");
-  //  console.log(file);
-
+    console.log("-------------------------");
+      console.log(file);
     //cb(null, file.originalname + "-" +  Date.now() );
     cb(null, file.fielname + '-' +  Date.now()+ '.pdf' );
   }
@@ -128,7 +131,7 @@ router.get('/facultad', async (req, res) => {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<>>>>><<<<><<<<<><>>><<>>><>><<<<><
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-var idFACULTAD
+
 // este servicio sirve para cambiar de pestaña recuperando el ID
 router.get('/insertcarrera/:id', async (req, res) => {
   const idfacu = req.params;
@@ -242,8 +245,7 @@ router.post('/addResEstu', async (req, res) => {
   res.redirect('/');
 });
 
-var idGlobalDocente;
-var idPDF;
+
 //servicio para añdir a resolucion docente
 router.post('/addResDoc/:id', async (req, res) =>{
   const ida = req.params;
@@ -310,6 +312,9 @@ router.get('/deleteResDOC/:id', async (req, res, next) => {
 });
 
 // servicio para mostrar resolucion docentes
+router.get('/viewsteacher', (req, res) =>{
+  res.render('insertarResolucionDoc');
+});
 router.get('/MostrarRESdoc', async (req, res) => {
   Docente.find({id_a : (idGlobalDocente)}).exec( async (erro, files) =>{
     if(erro){
@@ -357,14 +362,18 @@ const id = req.params;
     }
     else {
       //res.send('img');
-      if(req.file == undefined){
-        res.redirect('/MostrarRESdoc');
-      }
-      else{
-        res.redirect('/MostrarRESdoc');
+      //if(req.file == undefined){
+        //res.redirect('/MostrarRESdoc');
+      //}
+      //else{
+        //console.log(req.file);
+        console.log("este archivo es"+ __filename);
+        console.log("esta ubicado en"+ __dirname);
+
+        res.redirect('/viewsteacher');
         const archivo ={
           id_ref : id.dc,
-          name : req.file.originalname,
+          name : req.file.filename,
           physicalpath : req.file.path,
           relativepath : ""
         };
@@ -373,26 +382,42 @@ const id = req.params;
           var file ={pdfs :new Array()};
 
         Docente.findOne({ _id : (id.dc)}).exec ( ( err, agr)=>{
-            const pdf = agr.pdf;
-            const aux = new Array();
-            if(pdf.length == 1 && pdf[0] == ""){
-              file.pdfs.push("/senddoc/"+infofile._id);
+          if(err){
+            //res.render('enviarPDF');
+            res.render('insertarResolucionDoc');
+            console.log(err);
+          }
+          else {
+            if(agr != null){
+              const pdf = agr.pdf;
+              const aux = new Array();
+              if(pdf.length == 1 && pdf[0] == ""){
+                file.pdfs.push("/senddoc/"+infofile._id);
+
+              }
+              else{
+                file.pdfs.push("/senddoc/"+infofile._id);
+              }
+              Docente.findOneAndUpdate({_id: (id.dc)},file, (err, params)=>{
+                if (err) {
+                  console.log(err);
+                }
+                console.log(req.file);
+                res.redirect('/viewsteacher');
+                //res.redirect('/VERRpdf');
+
+              });
+            }
+            else {
+              //res.redirect('/VERRpdf');
+              res.redirect('viewsteacher');
 
             }
-            else{
-              file.pdfs.push("/senddoc/"+infofile._id);
-            }
-            Docente.findOneAndUpdate({_id: (id.dc)},file, (err, params)=>{
-              if (err) {
-                console.log(err);
-              }
-              console.log(req.file);
-              console.log("este archivo es"+ __filename);
-              console.log("esta ubicado en"+ __dirname);
-            });
+          }
+
         })
         });
-      }
+    //  }
     }
   })
 });
@@ -510,7 +535,7 @@ console.log(docs);
 });*/
 
 //servicio para añadir a agrupar docente
-var grupo;
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 router.post('/addADoc', async (req, res)=>{
   const agr = {
@@ -621,6 +646,7 @@ router.post('/addAEst', async (req, res)=>{
     }
   })
 });
+
 router.post('/EstDic/:id', async(req, res) =>{
   const ida = req.params;
   const est = {
@@ -720,8 +746,8 @@ Agrupare.find({carrera : race, gestion : year}).exec( (err, docs) =>{
 })
 });
 
-router.get('/filtroRes/:id', async(req, res) =>{
-  const idg = req.params;
+router.get('/filtroRE', async(req, res) =>{
+  const idg = req.query;
   Estudiante.find({id_a : (idg.id)}).exec( (err, docs) =>{
     if(docs){
       res.status(200).json({
@@ -734,6 +760,49 @@ router.get('/filtroRes/:id', async(req, res) =>{
         });
     }
   })
+});
+
+
+router.get('/filtroRD/', async(req, res) =>{
+  const idg = req.query;
+  Docente.find({id_a : (idg.id)}).exec( (err, docs) =>{
+    if(docs){
+      res.status(200).json({
+        info:  docs
+        //aqui la ventana donde se muestra
+       });
+    }
+    else {
+      res.status(201).json({
+          "msn" : "no existen "
+        });
+    }
+  })
+});
+
+router.get('/filtroGD/', async(req, res) =>{
+  const params = req.query;
+  console.log(req.query);
+  
+  //  const tipo = params.tipo;
+  //db.prueba.find({ $text : { $search: '"Miguel Quijote"'} });
+  Agrupard.find({carrera : params.carrera, gestion : params.year, periodo : params.periodo  }).exec( (err, docs) =>{
+  if (docs != ""){
+    const  idg  = docs;
+    console.log(idg);
+    res.status(200).json({
+      info:  docs
+//aqui la ventana
+     });
+     //res.redirect('/filtroRD/?'+docs._id);
+  }
+  else{
+    res.status(201).json({
+        "msn" : "no existe "
+      });
+  }
+  })
+
 });
 // metodo actualizar
 //>>>>>>>>>>>>>><
